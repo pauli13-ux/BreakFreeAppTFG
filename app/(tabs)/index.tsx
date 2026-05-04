@@ -1,98 +1,192 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import {
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
+} from 'react-native';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import LottieView from 'lottie-react-native';
 
-export default function HomeScreen() {
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring
+} from 'react-native-reanimated';
+
+const { width } = Dimensions.get('window');
+
+export default function CuteLogin() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const router = useRouter();
+
+  const mascotHeight = useSharedValue(0);
+
+  const animatedMascotStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: withSpring(mascotHeight.value * -10) }],
+  }));
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
+      <View style={styles.inner}>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        {/* --- SECCIÓN DE LA MASCOTA CON LOTTIE --- */}
+        <Animated.View style={[styles.mascotContainer, animatedMascotStyle]}>
+          <LottieView
+            autoPlay
+            loop
+            style={styles.lottieMascot}
+            // Asegúrate de que el archivo se llame flower.json en assets/animations/
+            source={require('../../assets/animations/flower.json')}
+          />
+        </Animated.View>
+        {/* --------------------------------------- */}
+
+        <Text style={styles.title}>¡Hola de nuevo!</Text>
+        <Text style={styles.subtitle}>¿Qué hábito mejoraremos hoy?</Text>
+
+        <View style={styles.form}>
+          <TextInput
+            placeholder="Tu email"
+            style={styles.input}
+            placeholderTextColor="#A0AEC0"
+            onChangeText={setEmail}
+            onFocus={() => { mascotHeight.value = 1; }}
+            onBlur={() => { mascotHeight.value = 0; }}
+          />
+
+          <TextInput
+            placeholder="Contraseña secreta"
+            style={styles.input}
+            placeholderTextColor="#A0AEC0"
+            secureTextEntry
+            onChangeText={setPassword}
+            onFocus={() => { mascotHeight.value = 0.5; }}
+            onBlur={() => { mascotHeight.value = 0; }}
+          />
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              mascotHeight.value = 5;
+              setTimeout(() => {
+                mascotHeight.value = 0;
+                router.push('/dashboard');
+              }, 500);
+            }}
+          >
+            <Text style={styles.buttonText}>ENTRAR</Text>
+          </TouchableOpacity>
+        </View>
+
+
+        <TouchableOpacity
+          style={styles.footer}
+          onPress={() => router.push('/register')}
+        >
+          <Text style={styles.footerText}>
+            ¿Eres nuevo? <Text style={styles.bold}>Crea una cuenta</Text>
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  container: {
+    flex: 1,
+    backgroundColor: '#F3E8FF',
+  },
+  inner: {
+    flex: 1,
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'center',
+    paddingHorizontal: 30,
+    width: '100%',
+    maxWidth: 450,
+    alignSelf: 'center',
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  mascotContainer: {
+    width: 220,
+    height: 220,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  lottieMascot: {
+    width: '100%',
+    height: '100%',
   },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#553C9A',
+    marginTop: 10,
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#6B46C1',
+    marginBottom: 30,
+    textAlign: 'center',
+  },
+  form: {
+    width: '100%',
+  },
+  input: {
+    backgroundColor: 'white',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    marginBottom: 15,
+    fontSize: 16,
+    color: '#4A5568',
+    borderWidth: 1,
+    borderColor: '#E9D8FD',
+  },
+  button: {
+    backgroundColor: '#48BB78',
+    paddingVertical: 18,
+    borderRadius: 20,
+    alignItems: 'center',
+    marginTop: 10,
+
+    elevation: 5,
+
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  footer: {
+    marginTop: 25,
+  },
+  footerText: {
+    color: '#6B46C1',
+    fontSize: 14,
+  },
+  bold: {
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
+  }
+
+
+
+
 });
