@@ -1,10 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons'; // Iconos listos para usar
+import { Ionicons } from '@expo/vector-icons';
+
 
 export default function OnboardingScreen() {
   const router = useRouter();
+  
+  
 
   const features = [
     {
@@ -52,7 +55,7 @@ export default function OnboardingScreen() {
         {/* Botón para ir al Dashboard */}
         <TouchableOpacity 
           style={styles.button} 
-          onPress={() => router.replace('/dashboard')}
+          onPress={() => router.replace('/dashboard')} 
         >
           <Text style={styles.buttonText}>¡Entendido, vamos!</Text>
         </TouchableOpacity>
