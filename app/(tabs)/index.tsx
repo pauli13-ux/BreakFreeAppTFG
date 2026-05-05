@@ -81,7 +81,7 @@ export default function CuteLogin() {
               mascotHeight.value = 5;
               setTimeout(() => {
                 mascotHeight.value = 0;
-                router.push('/dashboard');
+                router.replace('/onboarding');
               }, 500);
             }}
           >
