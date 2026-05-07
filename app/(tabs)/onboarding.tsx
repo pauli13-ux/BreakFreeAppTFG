@@ -1,13 +1,13 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import React from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 
 export default function OnboardingScreen() {
   const router = useRouter();
-  
-  
+
+
 
   const features = [
     {
@@ -33,13 +33,13 @@ export default function OnboardingScreen() {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Logo y Título */}
+
         <View style={styles.header}>
           <Text style={styles.logoText}>BreakFree</Text>
           <Text style={styles.subtitle}>Tu camino hacia una vida más libre empieza aquí.</Text>
         </View>
 
-        {/* Tarjetas Informativas */}
+
         {features.map((item, index) => (
           <View key={index} style={styles.card}>
             <View style={[styles.iconContainer, { backgroundColor: item.color + '20' }]}>
@@ -52,10 +52,10 @@ export default function OnboardingScreen() {
           </View>
         ))}
 
-        {/* Botón para ir al Dashboard */}
-        <TouchableOpacity 
-          style={styles.button} 
-          onPress={() => router.replace('/dashboard')} 
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.replace('/selector_habito')}
         >
           <Text style={styles.buttonText}>¡Entendido, vamos!</Text>
         </TouchableOpacity>
