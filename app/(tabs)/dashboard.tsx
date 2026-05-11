@@ -1,128 +1,275 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
+// 1. Datos organizados
+const contenidoRescate = {
+  juegos: [
+    { id: 1, texto: "❌ Tres en Raya ⭕" },
+    { id: 2, texto: "🧠 Juego de Memoria" },
+    { id: 3, texto: "⚡ Atrapa el Reflejo" }
+  ],
+  retos: [
+    { id: 1, texto: "Haz 10 sentadillas", tipo: 'reps', meta: 10 },
+    { id: 2, texto: "Bebe un vaso de agua", tipo: 'reps', meta: 1 },
+    { id: 3, texto: "Plancha abdominal", tipo: 'tiempo', meta: 30 },
+    { id: 4, texto: "Cierra los ojos y respira", tipo: 'tiempo', meta: 20 }
+  ],
+  frases: [
+    { id: 1, texto: "No dejes que un momento borre meses de esfuerzo." },
+    { id: 2, texto: "Eres más fuerte que tus impulsos." },
+    { id: 3, texto: "Tu 'yo' del futuro te lo agradecerá." },
+    { id: 4, texto: "Cada cigarrillo no fumado es una victoria para tu salud." },
+    { id: 5, texto: "El éxito es la suma de pequeños esfuerzos repetidos día tras día." },
+    { id: 6, texto: "No necesitas un cigarrillo para enfrentar este momento." }
+  ]
+};
+
 const dias = [
-  { d: 'L', active: false }, { d: 'M', active: false }, { d: 'X', active: false }, 
+  { d: 'L', active: false }, { d: 'M', active: false }, { d: 'X', active: false },
   { d: 'J', active: true }, { d: 'V', active: false }, { d: 'S', active: false }, { d: 'D', active: false }
 ];
 
+function calcularGanador(cuadrados: any[]) {
+  const lineas = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+  for (let i = 0; i < lineas.length; i++) {
+    const [a, b, c] = lineas[i];
+    if (cuadrados[a] && cuadrados[a] === cuadrados[b] && cuadrados[a] === cuadrados[c]) return cuadrados[a];
+  }
+  return null;
+}
+
 export default function Dashboard() {
   const router = useRouter();
+
+  // --- CONFIGURACIÓN ---
+  const simboloCartaMemoria = '❓';
+
+  // --- ESTADOS ---
+  const [modalVisible, setModalVisible] = useState(false);
+  const [categoria, setCategoria] = useState<'juegos' | 'retos' | 'frases' | null>(null);
+
+  // Estados Juegos
+  const [juegoActivo, setJuegoActivo] = useState(false);
+  const [tablero, setTablero] = useState(Array(9).fill(null));
+  const [esTurnoX, setEsTurnoX] = useState(true);
+  const [memoriaActiva, setMemoriaActiva] = useState(false);
+  const [cartas, setCartas] = useState<{ id: number, emoji: string, revelada: boolean, resuelta: boolean }[]>([]);
+  const [seleccionadas, setSeleccionadas] = useState<number[]>([]);
+  const iconosParejas = ['🚭', '💪', '🚀', '🔥', '✨', '🍎'];
+  const [reflejoActivo, setReflejoActivo] = useState(false);
+  const [posicion, setPosicion] = useState({ top: 50, left: 50 });
+  const [puntos, setPuntos] = useState(0);
+
+  // Estados Retos
+  const [retoEjecutandose, setRetoEjecutandose] = useState<any | null>(null);
+  const [progresoReto, setProgresoReto] = useState(0);
+  const [segundos, setSegundos] = useState(0);
+
+  // Estado Frases
+  const [fraseActual, setFraseActual] = useState(contenidoRescate.frases[0]);
+
+  useEffect(() => {
+    let intervalo: any;
+    if (retoEjecutandose?.tipo === 'tiempo' && segundos > 0) {
+      intervalo = setInterval(() => setSegundos((s) => s - 1), 1000);
+    }
+    return () => clearInterval(intervalo);
+  }, [segundos, retoEjecutandose]);
+
+  const moverEmoji = () => setPosicion({ top: Math.random() * 130, left: Math.random() * 170 });
+
+  const iniciarMemoria = () => {
+    const baraja = [...iconosParejas, ...iconosParejas].sort(() => Math.random() - 0.5).map((emoji, index) => ({ id: index, emoji, revelada: false, resuelta: false }));
+    setCartas(baraja); setSeleccionadas([]); setMemoriaActiva(true);
+  };
+
+  const seleccionarCarta = (id: number) => {
+    if (seleccionadas.length === 2 || cartas[id].revelada || cartas[id].resuelta) return;
+    const nuevas = [...cartas]; nuevas[id].revelada = true; setCartas(nuevas);
+    const sel = [...seleccionadas, id]; setSeleccionadas(sel);
+    if (sel.length === 2) {
+      if (cartas[sel[0]].emoji === cartas[sel[1]].emoji) {
+        nuevas[sel[0]].resuelta = true; nuevas[sel[1]].resuelta = true; setSeleccionadas([]);
+      } else {
+        setTimeout(() => { nuevas[sel[0]].revelada = false; nuevas[sel[1]].revelada = false; setCartas([...nuevas]); setSeleccionadas([]); }, 800);
+      }
+    }
+  };
+
+  const generarFraseAleatoria = () => {
+    const indice = Math.floor(Math.random() * contenidoRescate.frases.length);
+    setFraseActual(contenidoRescate.frases[indice]);
+  };
+
+  const abrirRescate = () => {
+    setCategoria(null); setJuegoActivo(false); setMemoriaActiva(false); setReflejoActivo(false); setRetoEjecutandose(null);
+    generarFraseAleatoria();
+    setModalVisible(true);
+  };
 
   return (
     <LinearGradient colors={['#F3F0FF', '#FFFFFF', '#FDF2F8']} style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-          
-          {/* 1. Título de la App */}
+
           <View style={styles.topNav}>
-             <Text style={styles.brandTitle}>BreakFree</Text>
-             <Text style={styles.brandSubtitle}>Tu camino hacia la libertad</Text>
+            <Text style={styles.brandTitle}>BreakFree</Text>
+            <Text style={styles.brandSubtitle}>Tu camino hacia la libertad</Text>
           </View>
 
-          {/* 2. Tarjeta Contenedora Principal (Efecto Cápsula) */}
           <View style={styles.whiteCard}>
-            
             <View style={styles.headerRow}>
               <Text style={styles.todayTitle}>Progreso</Text>
-              <TouchableOpacity style={styles.profileIcon}>
-                <Ionicons name="notifications-outline" size={20} color="#8E5CF6" />
-              </TouchableOpacity>
+              <TouchableOpacity style={styles.profileIcon}><Ionicons name="notifications-outline" size={20} color="#8E5CF6" /></TouchableOpacity>
             </View>
 
-            {/* Calendario de Racha Semanal */}
             <View style={styles.calendar}>
               {dias.map((item, i) => (
                 <View key={i} style={[styles.dayItem, item.active && styles.dayItemActive]}>
-                   <Text style={[styles.dayName, item.active && styles.dayTextActive]}>{item.d}</Text>
-                   {item.active && <View style={styles.activeDot} />}
+                  <Text style={[styles.dayName, item.active && styles.dayTextActive]}>{item.d}</Text>
+                  {item.active && <View style={styles.activeDot} />}
                 </View>
               ))}
             </View>
 
-            {/* Ilustración de Estado Central */}
             <View style={styles.illustrationContainer}>
-                <LinearGradient colors={['#8E5CF6', '#C084FC']} style={styles.blob}>
-                    <Ionicons name="rocket-outline" size={80} color="#FFF" />
-                </LinearGradient>
-                <Text style={styles.mainProgressText}>Desintoxicación (15%)</Text>
-                <Text style={styles.statusSub}>¡Tus pulmones están empezando a sanar!</Text>
-                
-                <View style={styles.miniBarBg}>
-                   <LinearGradient 
-                    colors={['#8E5CF6', '#4ADE80']} 
-                    start={{x: 0, y: 0}} 
-                    end={{x: 1, y: 0}} 
-                    style={[styles.miniBarFill, { width: '15%' }]} 
-                   />
-                </View>
+              <LinearGradient colors={['#8E5CF6', '#C084FC']} style={styles.blob}><Ionicons name="rocket-outline" size={80} color="#FFF" /></LinearGradient>
+              <Text style={styles.mainProgressText}>Desintoxicación (15%)</Text>
+              <View style={styles.miniBarBg}><View style={[styles.miniBarFill, { width: '15%' }]} /></View>
             </View>
 
-            {/* Grid de Widgets (Tiempo y Impacto) */}
             <View style={styles.widgetsGrid}>
               <View style={styles.widget}>
-                <View style={styles.widgetHeader}>
-                   <Ionicons name="time" size={18} color="#8E5CF6" />
-                   <Text style={styles.widgetTitle}>Tiempo Libre</Text>
-                </View>
-                <Text style={styles.widgetValue}>02<Text style={styles.unit}>d</Text> 14<Text style={styles.unit}>h</Text></Text>
-                <Text style={styles.widgetSub}>Sin recaídas</Text>
+                <View style={styles.widgetHeader}><Ionicons name="time" size={18} color="#8E5CF6" /><Text style={styles.widgetTitle}>Tiempo</Text></View>
+                <Text style={styles.widgetValue}>02d 14h</Text>
               </View>
-
               <View style={styles.widget}>
-                <View style={styles.widgetHeader}>
-                   <Ionicons name="stats-chart" size={18} color="#4ADE80" />
-                   <Text style={styles.widgetTitle}>Impacto</Text>
-                </View>
-                <View style={styles.activityRow}>
-                   <Ionicons name="cash-outline" size={16} color="#4ADE80" />
-                   <Text style={styles.activityValue}>12.50€ <Text style={styles.unit}>ahorro</Text></Text>
-                </View>
-                <View style={styles.activityRow}>
-                   <Ionicons name="heart-outline" size={16} color="#EF4444" />
-                   <Text style={styles.activityValue}>+5% <Text style={styles.unit}>oxígeno</Text></Text>
-                </View>
+                <View style={styles.widgetHeader}><Ionicons name="cash-outline" size={18} color="#4ADE80" /><Text style={styles.widgetTitle}>Ahorro</Text></View>
+                <Text style={styles.widgetValue}>12.50€</Text>
               </View>
             </View>
 
-            {/* 3. NUEVA SECCIÓN: Journal y Emociones */}
-            <View style={styles.journalCard}>
-              <Text style={styles.journalTitle}>¿Cómo te sientes hoy?</Text>
-              <View style={styles.emojiRow}>
-                {['😔', '😐', '😊', '🤩', '🔥'].map((emoji, index) => (
-                  <TouchableOpacity key={index} style={styles.emojiButton}>
-                    <Text style={styles.emojiText}>{emoji}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-              <TouchableOpacity 
-                style={styles.addNoteButton}
-                onPress={() => router.push('/journal')} 
-              >
-                <Ionicons name="create-outline" size={18} color="#8E5CF6" />
-                <Text style={styles.addNoteText}>Escribir en mi diario...</Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* 4. Botón de Emergencia SOS */}
-            <TouchableOpacity style={styles.sosButton}>
-                <LinearGradient 
-                    colors={['#FEF2F2', '#FFF1F2']} 
-                    style={styles.sosGradient}
-                >
-                    <Ionicons name="alert-circle" size={24} color="#EF4444" />
-                    <Text style={styles.sosText}>TENGO UNA TENTACIÓN</Text>
-                </LinearGradient>
+            <TouchableOpacity style={styles.sosButton} onPress={abrirRescate}>
+              <LinearGradient colors={['#FEF2F2', '#FFF1F2']} style={styles.sosGradient}>
+                <Ionicons name="alert-circle" size={24} color="#EF4444" />
+                <Text style={styles.sosText}>TENGO UNA TENTACIÓN</Text>
+              </LinearGradient>
             </TouchableOpacity>
-
           </View>
         </ScrollView>
       </SafeAreaView>
+
+      <Modal animationType="slide" transparent={true} visible={modalVisible}>
+        <View style={styles.centrarModal}>
+          <View style={styles.modalContenido}>
+
+            {categoria === 'frases' ? (
+              <View style={styles.contenedorFrases}>
+                <Text style={styles.modalTitulo}>Inspiración ✨</Text>
+                <LinearGradient colors={['#F472B6', '#DB2777']} style={styles.tarjetaFrase}>
+                  <Ionicons name="chatbubbles-outline" size={30} color="rgba(255,255,255,0.4)" style={{ alignSelf: 'flex-start' }} />
+                  <Text style={styles.textoFrasePrincipal}>"{fraseActual.texto}"</Text>
+                  <Ionicons name="heart" size={24} color="rgba(255,255,255,0.4)" style={{ alignSelf: 'flex-end' }} />
+                </LinearGradient>
+                <TouchableOpacity style={styles.btnNuevaFrase} onPress={generarFraseAleatoria}>
+                  <Text style={styles.btnNuevaFraseTexto}>✨ Dame otra dosis de ánimo</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.botonVolver} onPress={() => setCategoria(null)}><Text style={styles.textoVolver}>⬅️ Volver</Text></TouchableOpacity>
+              </View>
+
+            ) : retoEjecutandose ? (
+              <View style={styles.gameContainer}>
+                <Text style={styles.modalTitulo}>{retoEjecutandose.texto}</Text>
+                {retoEjecutandose.tipo === 'tiempo' ? (
+                  <View style={styles.circuloTiempo}><Text style={styles.numeroTiempo}>{segundos}s</Text></View>
+                ) : (
+                  <View style={styles.contenedorReps}>
+                    <Text style={styles.numeroTiempo}>{progresoReto} / {retoEjecutandose.meta}</Text>
+                    <TouchableOpacity style={styles.btnContar} onPress={() => setProgresoReto(Math.min(progresoReto + 1, retoEjecutandose.meta))}>
+                      <Ionicons name="add" size={40} color="white" />
+                    </TouchableOpacity>
+                  </View>
+                )}
+                {((retoEjecutandose.tipo === 'tiempo' && segundos === 0) || (progresoReto === retoEjecutandose.meta)) && <Text style={styles.ganasteTexto}>¡LOGRADO! 🎉</Text>}
+                <TouchableOpacity style={styles.botonVolver} onPress={() => setRetoEjecutandose(null)}><Text style={styles.textoVolver}>⬅️ Volver</Text></TouchableOpacity>
+              </View>
+
+            ) : reflejoActivo ? (
+              <View style={styles.gameContainer}>
+                <Text style={styles.modalTitulo}>¡Rápido! ⚡</Text>
+                <View style={styles.areaReflejo}>
+                  {puntos < 10 ? (
+                    <TouchableOpacity onPress={() => { setPuntos(puntos + 1); moverEmoji(); }} style={[styles.emojiReflejo, { top: posicion.top, left: posicion.left }]}><Text style={{ fontSize: 40 }}>🚭</Text></TouchableOpacity>
+                  ) : <Text style={styles.ganasteTexto}>¡Objetivo conseguido! 🎯</Text>}
+                </View>
+                <TouchableOpacity style={styles.botonVolver} onPress={() => setReflejoActivo(false)}><Text style={styles.textoVolver}>⬅️ Volver</Text></TouchableOpacity>
+              </View>
+
+            ) : memoriaActiva ? (
+              <View style={styles.gameContainer}>
+                <Text style={styles.modalTitulo}>Memoria 🧠</Text>
+                <View style={styles.gridMemoria}>
+                  {cartas.map((c) => (
+                    <TouchableOpacity key={c.id} style={[styles.carta, (c.revelada || c.resuelta) && styles.cartaRevelada]} onPress={() => seleccionarCarta(c.id)}>
+                      <Text style={styles.emojiCarta}>{(c.revelada || c.resuelta) ? c.emoji : simboloCartaMemoria}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+                <TouchableOpacity style={styles.botonVolver} onPress={() => setMemoriaActiva(false)}><Text style={styles.textoVolver}>⬅️ Volver</Text></TouchableOpacity>
+              </View>
+
+            ) : juegoActivo ? (
+              <View style={styles.gameContainer}>
+                <Text style={styles.modalTitulo}>Tres en Raya</Text>
+                <View style={styles.board}>
+                  {tablero.map((val, i) => (
+                    <TouchableOpacity key={i} style={styles.square} onPress={() => { if (!val && !calcularGanador(tablero)) { const n = [...tablero]; n[i] = esTurnoX ? 'X' : 'O'; setTablero(n); setEsTurnoX(!esTurnoX); } }}>
+                      <Text style={[styles.squareText, { color: val === 'X' ? '#8E5CF6' : '#F472B6' }]}>{val}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+                <TouchableOpacity style={styles.botonVolver} onPress={() => setJuegoActivo(false)}><Text style={styles.textoVolver}>⬅️ Volver</Text></TouchableOpacity>
+              </View>
+
+            ) : (
+              <>
+                {!categoria ? (
+                  <>
+                    <Text style={styles.modalTitulo}>¿Qué necesitas?</Text>
+                    <TouchableOpacity style={[styles.botonMenu, { backgroundColor: '#8E5CF6' }]} onPress={() => setCategoria('juegos')}><Text style={styles.textoBoton}>🎮 Juegos</Text></TouchableOpacity>
+                    <TouchableOpacity style={[styles.botonMenu, { backgroundColor: '#4ADE80' }]} onPress={() => setCategoria('retos')}><Text style={styles.textoBoton}>💪 Retos</Text></TouchableOpacity>
+                    <TouchableOpacity style={[styles.botonMenu, { backgroundColor: '#F472B6' }]} onPress={() => setCategoria('frases')}><Text style={styles.textoBoton}>✨ Motivación</Text></TouchableOpacity>
+                  </>
+                ) : (
+                  <>
+                    <Text style={styles.modalTitulo}>{categoria.toUpperCase()}</Text>
+                    {categoria === 'juegos' ? (
+                      <View style={{ width: '100%' }}>
+                        <TouchableOpacity style={styles.opcionCajaJuego} onPress={() => { setJuegoActivo(true); setTablero(Array(9).fill(null)); }}><Text style={styles.opcionTextoJuego}>❌ Tres en Raya</Text></TouchableOpacity>
+                        <TouchableOpacity style={styles.opcionCajaJuego} onPress={iniciarMemoria}><Text style={styles.opcionTextoJuego}>🧠 Memoria</Text></TouchableOpacity>
+                        <TouchableOpacity style={styles.opcionCajaJuego} onPress={() => { setReflejoActivo(true); setPuntos(0); moverEmoji(); }}><Text style={styles.opcionTextoJuego}>⚡ Reflejos</Text></TouchableOpacity>
+                      </View>
+                    ) : categoria === 'retos' ? (
+                      contenidoRescate.retos.map((r) => (
+                        <TouchableOpacity key={r.id} style={styles.opcionCaja} onPress={() => { setRetoEjecutandose(r); setProgresoReto(0); setSegundos(r.meta); }}>
+                          <Text style={styles.opcionTexto}>🔥 {r.texto}</Text>
+                        </TouchableOpacity>
+                      ))
+                    ) : null}
+                    <TouchableOpacity style={styles.botonVolver} onPress={() => setCategoria(null)}><Text style={styles.textoVolver}>⬅️ Volver</Text></TouchableOpacity>
+                  </>
+                )}
+              </>
+            )}
+            <TouchableOpacity style={styles.botonCerrarX} onPress={() => setModalVisible(false)}><Ionicons name="close-circle" size={36} color="#D1D5DB" /></TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </LinearGradient>
   );
 }
@@ -133,55 +280,60 @@ const styles = StyleSheet.create({
   topNav: { alignItems: 'center', marginTop: 10, marginBottom: 15 },
   brandTitle: { fontSize: 38, fontWeight: '900', color: '#5D45DB', letterSpacing: -1 },
   brandSubtitle: { fontSize: 14, color: '#6B7280', fontWeight: '500' },
-  
-  whiteCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    marginHorizontal: 12,
-    borderRadius: 45,
-    padding: 22,
-    shadowColor: '#8E5CF6',
-    shadowOffset: { width: 0, height: 15 },
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    elevation: 8,
-  },
+  whiteCard: { backgroundColor: 'rgba(255, 255, 255, 0.9)', marginHorizontal: 12, borderRadius: 45, padding: 22, elevation: 8 },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
   todayTitle: { fontSize: 28, fontWeight: '800', color: '#1F2937' },
   profileIcon: { backgroundColor: '#F3F0FF', padding: 10, borderRadius: 18 },
-
   calendar: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 25 },
   dayItem: { width: 40, height: 55, backgroundColor: '#F3F4F6', borderRadius: 15, justifyContent: 'center', alignItems: 'center' },
   dayItemActive: { backgroundColor: '#5D45DB' },
   dayName: { fontSize: 14, fontWeight: '700', color: '#9CA3AF' },
   dayTextActive: { color: '#FFF' },
   activeDot: { width: 4, height: 4, backgroundColor: '#FFF', borderRadius: 2, marginTop: 4 },
-
   illustrationContainer: { alignItems: 'center', marginBottom: 30 },
-  blob: { width: 150, height: 150, borderRadius: 75, justifyContent: 'center', alignItems: 'center', marginBottom: 15, shadowColor: '#8E5CF6', shadowOpacity: 0.2, shadowRadius: 15 },
-  mainProgressText: { fontSize: 22, fontWeight: '900', color: '#111827' },
-  statusSub: { fontSize: 13, color: '#6B7280', marginTop: 4, textAlign: 'center' },
+  blob: { width: 110, height: 110, borderRadius: 55, justifyContent: 'center', alignItems: 'center', marginBottom: 15 },
+  mainProgressText: { fontSize: 20, fontWeight: '900', color: '#111827' },
   miniBarBg: { width: '60%', height: 8, backgroundColor: '#E5E7EB', borderRadius: 10, marginTop: 15, overflow: 'hidden' },
-  miniBarFill: { height: '100%', borderRadius: 10 },
-
+  miniBarFill: { height: '100%', backgroundColor: '#8E5CF6', borderRadius: 10 },
   widgetsGrid: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
   widget: { backgroundColor: '#FFF', width: '48%', borderRadius: 25, padding: 16, borderWidth: 1, borderColor: '#F3F4F6' },
   widgetHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
   widgetTitle: { fontSize: 12, fontWeight: '700', color: '#6B7280', marginLeft: 6 },
-  widgetValue: { fontSize: 22, fontWeight: '800', color: '#111827' },
-  widgetSub: { fontSize: 11, color: '#9CA3AF', marginTop: 4 },
-  unit: { fontSize: 12, color: '#9CA3AF', fontWeight: '400' },
-  activityRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
-  activityValue: { fontSize: 13, fontWeight: '700', color: '#374151', marginLeft: 5 },
-
-  journalCard: { backgroundColor: '#F9FAFB', borderRadius: 25, padding: 18, marginBottom: 20 },
-  journalTitle: { fontSize: 16, fontWeight: '700', color: '#1F2937', marginBottom: 12 },
-  emojiRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15 },
-  emojiButton: { width: 42, height: 42, backgroundColor: '#FFF', borderRadius: 12, justifyContent: 'center', alignItems: 'center', elevation: 1 },
-  emojiText: { fontSize: 20 },
-  addNoteButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 12, backgroundColor: '#FFF', borderRadius: 12, borderStyle: 'dashed', borderWidth: 1, borderColor: '#D1D5DB' },
-  addNoteText: { marginLeft: 8, color: '#6B7280', fontWeight: '600', fontSize: 13 },
-
+  widgetValue: { fontSize: 18, fontWeight: '800', color: '#111827' },
   sosButton: { marginTop: 5 },
   sosGradient: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 18, borderRadius: 25 },
-  sosText: { color: '#EF4444', fontWeight: '800', fontSize: 14, marginLeft: 10, letterSpacing: 0.5 }
+  sosText: { color: '#EF4444', fontWeight: '800', fontSize: 14, marginLeft: 10 },
+  centrarModal: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' },
+  modalContenido: { width: '85%', backgroundColor: 'white', borderRadius: 35, padding: 25, alignItems: 'center' },
+  modalTitulo: { fontSize: 20, fontWeight: '900', color: '#1F2937', marginBottom: 15, textAlign: 'center' },
+  botonMenu: { width: '100%', padding: 18, borderRadius: 20, marginBottom: 12, alignItems: 'center' },
+  textoBoton: { color: 'white', fontWeight: '800', fontSize: 16 },
+  opcionCaja: { width: '100%', backgroundColor: '#F3F4F6', padding: 15, borderRadius: 15, marginBottom: 10 },
+  opcionTexto: { fontSize: 15, color: '#4B5563', fontWeight: '600', textAlign: 'center' },
+  botonVolver: { marginTop: 15, padding: 10 },
+  textoVolver: { color: '#8E5CF6', fontWeight: 'bold' },
+  botonCerrarX: { position: 'absolute', top: -10, right: -10, backgroundColor: 'white', borderRadius: 20 },
+  gameContainer: { alignItems: 'center', width: '100%' },
+  board: { width: 210, height: 210, flexDirection: 'row', flexWrap: 'wrap', backgroundColor: '#E5E7EB', padding: 5, borderRadius: 15 },
+  square: { width: 63, height: 63, backgroundColor: 'white', margin: 2, justifyContent: 'center', alignItems: 'center', borderRadius: 10 },
+  squareText: { fontSize: 30, fontWeight: 'bold' },
+  gridMemoria: { width: '100%', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' },
+  carta: { width: 55, height: 55, backgroundColor: '#8E5CF6', margin: 4, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
+  cartaRevelada: { backgroundColor: '#F3F4F6' },
+  emojiCarta: { fontSize: 22 },
+  opcionCajaJuego: { width: '100%', backgroundColor: '#F3F0FF', padding: 15, borderRadius: 15, marginBottom: 10, borderWidth: 1, borderColor: '#8E5CF6' },
+  opcionTextoJuego: { color: '#8E5CF6', fontWeight: 'bold', textAlign: 'center' },
+  areaReflejo: { width: '100%', height: 180, backgroundColor: '#F9FAFB', borderRadius: 20, position: 'relative', overflow: 'hidden' },
+  emojiReflejo: { position: 'absolute' },
+  ganasteTexto: { fontSize: 18, fontWeight: 'bold', color: '#4ADE80', marginVertical: 10 },
+  circuloTiempo: { width: 100, height: 100, borderRadius: 50, borderWidth: 6, borderColor: '#4ADE80', justifyContent: 'center', alignItems: 'center', marginVertical: 20 },
+  numeroTiempo: { fontSize: 32, fontWeight: '900', color: '#111827' },
+  contenedorReps: { alignItems: 'center', marginVertical: 10 },
+  btnContar: { backgroundColor: '#4ADE80', width: 60, height: 60, borderRadius: 30, justifyContent: 'center', alignItems: 'center', marginTop: 10 },
+  // ESTILOS FRASES
+  contenedorFrases: { width: '100%', alignItems: 'center' },
+  tarjetaFrase: { width: '100%', padding: 25, borderRadius: 25, minHeight: 180, justifyContent: 'center', alignItems: 'center' },
+  textoFrasePrincipal: { color: 'white', fontSize: 18, fontWeight: '800', textAlign: 'center', fontStyle: 'italic', lineHeight: 26, marginVertical: 10 },
+  btnNuevaFrase: { marginTop: 15, backgroundColor: '#F3F4F6', paddingVertical: 12, paddingHorizontal: 15, borderRadius: 15, borderWidth: 1, borderColor: '#F472B6' },
+  btnNuevaFraseTexto: { color: '#DB2777', fontWeight: 'bold', fontSize: 13 },
 });
