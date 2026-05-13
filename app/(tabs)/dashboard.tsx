@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -48,10 +48,21 @@ export default function Dashboard() {
 
   // --- CONFIGURACIÓN ---
   const simboloCartaMemoria = '❓';
+  const emojisSentimientos = [
+    { emoji: '😔', label: 'Mal' },
+    { emoji: '😐', label: 'Regular' },
+    { emoji: '😊', label: 'Bien' },
+    { emoji: '🤩', label: 'Genial' },
+    { emoji: '🔥', label: 'Fuerte' }
+  ];
 
   // --- ESTADOS ---
   const [modalVisible, setModalVisible] = useState(false);
   const [categoria, setCategoria] = useState<'juegos' | 'retos' | 'frases' | null>(null);
+
+  // Estados Journal
+  const [sentimientoSeleccionado, setSentimientoSeleccionado] = useState<string | null>(null);
+  const [notaDiaria, setNotaDiaria] = useState('');
 
   // Estados Juegos
   const [juegoActivo, setJuegoActivo] = useState(false);
@@ -115,53 +126,88 @@ export default function Dashboard() {
   return (
     <LinearGradient colors={['#F3F0FF', '#FFFFFF', '#FDF2F8']} style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+          <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
-          <View style={styles.topNav}>
-            <Text style={styles.brandTitle}>BreakFree</Text>
-            <Text style={styles.brandSubtitle}>Tu camino hacia la libertad</Text>
-          </View>
-
-          <View style={styles.whiteCard}>
-            <View style={styles.headerRow}>
-              <Text style={styles.todayTitle}>Progreso</Text>
-              <TouchableOpacity style={styles.profileIcon}><Ionicons name="notifications-outline" size={20} color="#8E5CF6" /></TouchableOpacity>
+            <View style={styles.topNav}>
+              <Text style={styles.brandTitle}>BreakFree</Text>
+              <Text style={styles.brandSubtitle}>Tu camino hacia la libertad</Text>
             </View>
 
-            <View style={styles.calendar}>
-              {dias.map((item, i) => (
-                <View key={i} style={[styles.dayItem, item.active && styles.dayItemActive]}>
-                  <Text style={[styles.dayName, item.active && styles.dayTextActive]}>{item.d}</Text>
-                  {item.active && <View style={styles.activeDot} />}
+            <View style={styles.whiteCard}>
+              <View style={styles.headerRow}>
+                <Text style={styles.todayTitle}>Progreso</Text>
+                <TouchableOpacity style={styles.profileIcon}><Ionicons name="notifications-outline" size={20} color="#8E5CF6" /></TouchableOpacity>
+              </View>
+
+              <View style={styles.calendar}>
+                {dias.map((item, i) => (
+                  <View key={i} style={[styles.dayItem, item.active && styles.dayItemActive]}>
+                    <Text style={[styles.dayName, item.active && styles.dayTextActive]}>{item.d}</Text>
+                    {item.active && <View style={styles.activeDot} />}
+                  </View>
+                ))}
+              </View>
+
+              <View style={styles.illustrationContainer}>
+                <LinearGradient colors={['#8E5CF6', '#C084FC']} style={styles.blob}><Ionicons name="rocket-outline" size={80} color="#FFF" /></LinearGradient>
+                <Text style={styles.mainProgressText}>Desintoxicación (15%)</Text>
+                <View style={styles.miniBarBg}><View style={[styles.miniBarFill, { width: '15%' }]} /></View>
+              </View>
+
+              <View style={styles.widgetsGrid}>
+                <View style={styles.widget}>
+                  <View style={styles.widgetHeader}><Ionicons name="time" size={18} color="#8E5CF6" /><Text style={styles.widgetTitle}>Tiempo</Text></View>
+                  <Text style={styles.widgetValue}>02d 14h</Text>
                 </View>
-              ))}
-            </View>
-
-            <View style={styles.illustrationContainer}>
-              <LinearGradient colors={['#8E5CF6', '#C084FC']} style={styles.blob}><Ionicons name="rocket-outline" size={80} color="#FFF" /></LinearGradient>
-              <Text style={styles.mainProgressText}>Desintoxicación (15%)</Text>
-              <View style={styles.miniBarBg}><View style={[styles.miniBarFill, { width: '15%' }]} /></View>
-            </View>
-
-            <View style={styles.widgetsGrid}>
-              <View style={styles.widget}>
-                <View style={styles.widgetHeader}><Ionicons name="time" size={18} color="#8E5CF6" /><Text style={styles.widgetTitle}>Tiempo</Text></View>
-                <Text style={styles.widgetValue}>02d 14h</Text>
+                <View style={styles.widget}>
+                  <View style={styles.widgetHeader}><Ionicons name="cash-outline" size={18} color="#4ADE80" /><Text style={styles.widgetTitle}>Ahorro</Text></View>
+                  <Text style={styles.widgetValue}>12.50€</Text>
+                </View>
               </View>
-              <View style={styles.widget}>
-                <View style={styles.widgetHeader}><Ionicons name="cash-outline" size={18} color="#4ADE80" /><Text style={styles.widgetTitle}>Ahorro</Text></View>
-                <Text style={styles.widgetValue}>12.50€</Text>
-              </View>
-            </View>
 
-            <TouchableOpacity style={styles.sosButton} onPress={abrirRescate}>
-              <LinearGradient colors={['#FEF2F2', '#FFF1F2']} style={styles.sosGradient}>
-                <Ionicons name="alert-circle" size={24} color="#EF4444" />
-                <Text style={styles.sosText}>TENGO UNA TENTACIÓN</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
+              {/* --- NUEVO APARTADO: JOURNAL --- */}
+              <View style={styles.journalSection}>
+                <Text style={styles.journalTitle}>¿Cómo te sientes hoy?</Text>
+                <View style={styles.emojiContainer}>
+                  {emojisSentimientos.map((item) => (
+                    <TouchableOpacity
+                      key={item.label}
+                      style={[
+                        styles.emojiButton,
+                        sentimientoSeleccionado === item.label && styles.emojiButtonActive
+                      ]}
+                      onPress={() => setSentimientoSeleccionado(item.label)}
+                    >
+                      <Text style={styles.emojiText}>{item.emoji}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+                <View style={styles.notaContainer}>
+                  <TextInput
+                    style={styles.inputNota}
+                    placeholder="Escribe cómo va tu día..."
+                    placeholderTextColor="#9CA3AF"
+                    multiline
+                    value={notaDiaria}
+                    onChangeText={setNotaDiaria}
+                  />
+                  <TouchableOpacity style={styles.btnGuardarNota}>
+                    <Ionicons name="checkmark-circle" size={24} color="#8E5CF6" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <TouchableOpacity style={styles.sosButton} onPress={abrirRescate}>
+                <LinearGradient colors={['#FEF2F2', '#FFF1F2']} style={styles.sosGradient}>
+                  <Ionicons name="alert-circle" size={24} color="#EF4444" />
+                  <Text style={styles.sosText}>TENGO UNA TENTACIÓN</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </SafeAreaView>
 
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
@@ -300,6 +346,18 @@ const styles = StyleSheet.create({
   widgetHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
   widgetTitle: { fontSize: 12, fontWeight: '700', color: '#6B7280', marginLeft: 6 },
   widgetValue: { fontSize: 18, fontWeight: '800', color: '#111827' },
+
+  // ESTILOS JOURNAL
+  journalSection: { backgroundColor: '#F9FAFB', borderRadius: 25, padding: 15, marginBottom: 20 },
+  journalTitle: { fontSize: 16, fontWeight: '800', color: '#1F2937', marginBottom: 12 },
+  emojiContainer: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15 },
+  emojiButton: { padding: 10, borderRadius: 15, backgroundColor: 'white', width: '18%', alignItems: 'center', elevation: 2 },
+  emojiButtonActive: { backgroundColor: '#8E5CF6', borderWidth: 1, borderColor: '#5D45DB' },
+  emojiText: { fontSize: 20 },
+  notaContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 15, paddingHorizontal: 10, borderWidth: 1, borderColor: '#E5E7EB' },
+  inputNota: { flex: 1, paddingVertical: 10, fontSize: 14, color: '#374151', minHeight: 40 },
+  btnGuardarNota: { padding: 5 },
+
   sosButton: { marginTop: 5 },
   sosGradient: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 18, borderRadius: 25 },
   sosText: { color: '#EF4444', fontWeight: '800', fontSize: 14, marginLeft: 10 },
@@ -330,7 +388,6 @@ const styles = StyleSheet.create({
   numeroTiempo: { fontSize: 32, fontWeight: '900', color: '#111827' },
   contenedorReps: { alignItems: 'center', marginVertical: 10 },
   btnContar: { backgroundColor: '#4ADE80', width: 60, height: 60, borderRadius: 30, justifyContent: 'center', alignItems: 'center', marginTop: 10 },
-  // ESTILOS FRASES
   contenedorFrases: { width: '100%', alignItems: 'center' },
   tarjetaFrase: { width: '100%', padding: 25, borderRadius: 25, minHeight: 180, justifyContent: 'center', alignItems: 'center' },
   textoFrasePrincipal: { color: 'white', fontSize: 18, fontWeight: '800', textAlign: 'center', fontStyle: 'italic', lineHeight: 26, marginVertical: 10 },

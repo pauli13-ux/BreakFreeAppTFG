@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
+import { getFormError } from './utils/validations';
 import {
     Dimensions,
     KeyboardAvoidingView,
@@ -13,6 +14,8 @@ import {
     View
 } from 'react-native';
 
+
+import { Ionicons } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
 
 import Animated, {
@@ -28,8 +31,12 @@ export default function RegisterScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [modalVisible, setModalVisible] = useState(false);
+
+
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const router = useRouter();
     const mascotHeight = useSharedValue(0);
@@ -37,6 +44,25 @@ export default function RegisterScreen() {
     const animatedMascotStyle = useAnimatedStyle(() => ({
         transform: [{ translateY: withSpring(mascotHeight.value * -10) }],
     }));
+
+    const handleRegister = () => {
+        setErrorMessage(null);
+
+        const error = getFormError(email, password, true, confirmPassword);
+
+        if (error) {
+            setErrorMessage(error);
+            mascotHeight.value = 2;
+            setTimeout(() => { mascotHeight.value = 0; }, 300);
+            return;
+        }
+
+        mascotHeight.value = 5;
+        setTimeout(() => {
+            mascotHeight.value = 0;
+            setModalVisible(true);
+        }, 500);
+    };
 
     return (
         <KeyboardAvoidingView
@@ -46,7 +72,7 @@ export default function RegisterScreen() {
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={styles.inner}>
 
-                    {/* --- MASCOTA --- */}
+                    
                     <Animated.View style={[styles.mascotContainer, animatedMascotStyle]}>
                         <LottieView
                             autoPlay
@@ -60,7 +86,7 @@ export default function RegisterScreen() {
                     <Text style={styles.subtitle}>Crea tu cuenta para empezar a mejorar</Text>
 
                     <View style={styles.form}>
-                        {/* CAMPO: NOMBRE */}
+                    
                         <TextInput
                             placeholder="¿Cómo te llamas?"
                             style={styles.input}
@@ -70,7 +96,7 @@ export default function RegisterScreen() {
                             onBlur={() => { mascotHeight.value = 0; }}
                         />
 
-                        {/* CAMPO: EMAIL */}
+                    
                         <TextInput
                             placeholder="Tu email"
                             style={styles.input}
@@ -81,37 +107,60 @@ export default function RegisterScreen() {
                             onBlur={() => { mascotHeight.value = 0; }}
                         />
 
-                        {/* CAMPO: CONTRASEÑA */}
-                        <TextInput
-                            placeholder="Contraseña segura"
-                            style={styles.input}
-                            placeholderTextColor="#A0AEC0"
-                            secureTextEntry
-                            onChangeText={setPassword}
-                            onFocus={() => { mascotHeight.value = 0.5; }}
-                            onBlur={() => { mascotHeight.value = 0; }}
-                        />
+                        <View style={styles.passwordContainer}>
+                            <TextInput
+                                placeholder="Contraseña segura"
+                                style={styles.inputPassword}
+                                placeholderTextColor="#A0AEC0"
+                                secureTextEntry={!showPassword}
+                                onChangeText={setPassword}
+                                onFocus={() => { mascotHeight.value = 0.5; }}
+                                onBlur={() => { mascotHeight.value = 0; }}
+                            />
+                            <TouchableOpacity
+                                onPress={() => setShowPassword(!showPassword)}
+                                style={styles.eyeIcon}
+                            >
+                                <Ionicons
+                                    name={showPassword ? "eye-off" : "eye"}
+                                    size={22}
+                                    color="#6B46C1"
+                                />
+                            </TouchableOpacity>
+                        </View>
 
-                        {/* CAMPO: CONFIRMAR CONTRASEÑA */}
-                        <TextInput
-                            placeholder="Repite tu contraseña"
-                            style={styles.input}
-                            placeholderTextColor="#A0AEC0"
-                            secureTextEntry
-                            onChangeText={setConfirmPassword}
-                            onFocus={() => { mascotHeight.value = 0.5; }}
-                            onBlur={() => { mascotHeight.value = 0; }}
-                        />
+                    
+                        <View style={styles.passwordContainer}>
+                            <TextInput
+                                placeholder="Repite tu contraseña"
+                                style={styles.inputPassword}
+                                placeholderTextColor="#A0AEC0"
+                                secureTextEntry={!showConfirmPassword}
+                                onChangeText={setConfirmPassword}
+                                onFocus={() => { mascotHeight.value = 0.5; }}
+                                onBlur={() => { mascotHeight.value = 0; }}
+                            />
+                            <TouchableOpacity
+                                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                                style={styles.eyeIcon}
+                            >
+                                <Ionicons
+                                    name={showConfirmPassword ? "eye-off" : "eye"}
+                                    size={22}
+                                    color="#6B46C1"
+                                />
+                            </TouchableOpacity>
+                        </View>
+
+                        {errorMessage && (
+                            <View style={styles.errorContainer}>
+                                <Text style={styles.errorText}>{errorMessage}</Text>
+                            </View>
+                        )}
 
                         <TouchableOpacity
                             style={styles.button}
-                            onPress={() => {
-                                mascotHeight.value = 5;
-                                setTimeout(() => {
-                                    mascotHeight.value = 0;
-                                    setModalVisible(true);
-                                }, 500);
-                            }}
+                            onPress={handleRegister}
                         >
                             <Text style={styles.buttonText}>Crear mi cuenta</Text>
                         </TouchableOpacity>
@@ -126,6 +175,7 @@ export default function RegisterScreen() {
                         </Text>
                     </TouchableOpacity>
                 </View>
+
                 <Modal
                     animationType="fade"
                     transparent={true}
@@ -209,6 +259,40 @@ const styles = StyleSheet.create({
         color: '#4A5568',
         borderWidth: 1,
         borderColor: '#E9D8FD',
+    },
+    // Nuevos estilos para los inputs con icono
+    passwordContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'white',
+        borderRadius: 20,
+        marginBottom: 12,
+        borderWidth: 1,
+        borderColor: '#E9D8FD',
+        paddingHorizontal: 20,
+    },
+    inputPassword: {
+        flex: 1,
+        paddingVertical: 15,
+        fontSize: 16,
+        color: '#4A5568',
+    },
+    eyeIcon: {
+        paddingLeft: 10,
+    },
+    errorContainer: {
+        backgroundColor: '#FFF5F5',
+        padding: 10,
+        borderRadius: 15,
+        marginBottom: 15,
+        borderWidth: 1,
+        borderColor: '#FEB2B2',
+    },
+    errorText: {
+        color: '#C53030',
+        textAlign: 'center',
+        fontSize: 14,
+        fontWeight: '500',
     },
     button: {
         backgroundColor: '#48BB78',
