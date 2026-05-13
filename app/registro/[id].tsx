@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 
 export default function RegistroCuestionario() {
     const { id } = useLocalSearchParams();
@@ -42,7 +42,19 @@ export default function RegistroCuestionario() {
         ]
     };
 
-    const steps = allQuestions[id as string] || allQuestions.fumar;
+    // Forzamos a que steps se recalcule solo cuando 'id' esté realmente presente
+    const steps = id ? (allQuestions[id as string] || allQuestions.fumar) : null;
+
+    // Si aún no tenemos los pasos o el ID, mostramos un cargando para evitar que 
+    // se renderice "fumar" por defecto por un milisegundo.
+    if (!steps) {
+        return (
+            <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+                <ActivityIndicator size="large" color="#6B46C1" />
+            </View>
+        );
+    }
+
     const currentData = steps[currentStepIndex];
     const totalSteps = steps.length;
 
@@ -54,10 +66,11 @@ export default function RegistroCuestionario() {
 
         if (currentStepIndex < totalSteps - 1) {
             setCurrentStepIndex(currentStepIndex + 1);
-            setSelectedOption(null); // Reseteamos la selección para la nueva pregunta
+            setSelectedOption(null);
         } else {
             console.log("Cuestionario finalizado. Respuestas:", newResponses);
-            router.replace("/(tabs)");
+            // Ahora redirigimos a la pantalla informativa que creamos antes
+            router.replace("/info-habito");
         }
     };
 

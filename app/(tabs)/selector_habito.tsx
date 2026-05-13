@@ -3,20 +3,20 @@ import { View, Text, StyleSheet, TouchableOpacity, Dimensions, SafeAreaView } fr
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
-// Obtenemos el ancho de la pantalla para calcular el tamaño de las tarjetas
+
 const { width } = Dimensions.get('window');
 
 export default function SelectorHabito() {
   const router = useRouter();
 
-  // Definimos nuestros 4 hábitos con sus colores e iconos
+
   const habitos = [
     {
       id: 'fumar',
       title: 'Dejar de Fumar',
       subtitle: 'Libera tus pulmones',
       icon: 'logo-no-smoking',
-      color: '#FF8A65', // Naranja/Rojo suave
+      color: '#FF8A65',
       route: '/registro/fumar'
     },
     {
@@ -24,7 +24,7 @@ export default function SelectorHabito() {
       title: 'Procrastinar',
       subtitle: 'Gestiona tu tiempo',
       icon: 'hourglass-outline',
-      color: '#9575CD', // Violeta
+      color: '#9575CD',
       route: '/registro/procrastinar'
     },
     {
@@ -32,29 +32,29 @@ export default function SelectorHabito() {
       title: 'Ansiedad por Comer',
       subtitle: 'Alimentación consciente',
       icon: 'fast-food-outline',
-      color: '#FFD54F', // Amarillo
+      color: '#FFD54F',
       route: '/registro/comida'
     },
     {
-      id: 'sedentarismo',
-      title: 'Sedentarismo',
-      subtitle: 'Muévete más',
-      icon: 'bicycle-outline',
-      color: '#81C784', // Verde
-      route: '/registro/sedentarismo'
+      id: 'doomscrolling',
+      title: 'Doomscrolling',
+      subtitle: 'Controla tu tiempo en redes',
+      icon: 'logo-instagram',
+      color: '#FF6B6B',
+      route: '/registro/doomscrolling'
     }
   ];
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        {/* Cabecera */}
+
         <View style={styles.header}>
           <Text style={styles.title}>Elige tu reto</Text>
           <Text style={styles.subtitle}>¿En qué hábito quieres enfocarte primero para mejorar tu vida?</Text>
         </View>
 
-        {/* Cuadrícula de tarjetas */}
+
         <View style={styles.grid}>
           {habitos.map((habito) => (
             <TouchableOpacity
@@ -110,12 +110,12 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#F9FAFB',
-    width: (width - 60) / 2, // Ajuste para que quepan dos por fila con margen
+    width: (width - 60) / 2,
     borderRadius: 24,
     padding: 20,
     marginBottom: 20,
     alignItems: 'center',
-    // Sombra para iOS y Android
+
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
