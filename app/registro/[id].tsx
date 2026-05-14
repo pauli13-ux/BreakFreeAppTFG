@@ -23,7 +23,7 @@ export default function RegistroCuestionario() {
             { title: "¿Cómo describirías tu hambre ahora mismo?", options: [{ id: '1', label: 'Repentina y urgente' }, { id: '2', label: 'Poco a poco, puedo esperar' }, { id: '3', label: 'Ganas de algo muy dulce' }, { id: '4', label: 'Vacío en el pecho/estómago' }] },
             { title: "¿Qué emoción sueles sentir antes de comer así?", options: [{ id: '1', label: 'Estrés o agobio' }, { id: '2', label: 'Aburrimiento' }, { id: '3', label: 'Tristeza o soledad' }, { id: '4', label: 'Cansancio extremo' }] },
             { title: "¿Sueles comer con distracciones (móvil/TV)?", options: [{ id: '1', label: 'Siempre' }, { id: '2', label: 'A veces' }, { id: '3', label: 'Rara vez' }, { id: '4', label: 'Nunca' }] },
-            { title: "¿Sientes culpabilidad después de comer?", options: [{ id: '1', label: 'Siempre' }, { id: '2', label: 'A menudo' }, { id: '3', label: 'Casi nunca' }, { id: '4', label: 'Nunca' }] },
+            { title: "¿Siente culpabilidad después de comer?", options: [{ id: '1', label: 'Siempre' }, { id: '2', label: 'A menudo' }, { id: '3', label: 'Casi nunca' }, { id: '4', label: 'Nunca' }] },
             { title: "¿Qué tipo de alimentos se te antojan en esos momentos? ", options: [{ id: '1', label: 'Dulces/Chocolates' }, { id: '2', label: 'Salados/Snacks' }, { id: '3', label: 'Comida rápida' }, { id: '4', label: 'Me da igual mientras sea comida' }] }
         ],
         doomscrolling: [
@@ -42,14 +42,13 @@ export default function RegistroCuestionario() {
         ]
     };
 
-    // Forzamos a que steps se recalcule solo cuando 'id' esté realmente presente
-    const steps = id ? (allQuestions[id as string] || allQuestions.fumar) : null;
+    // Usamos el id para buscar los steps. 
+    // Solo si id es nulo o no existe en allQuestions, ponemos un valor por defecto.
+    const steps = id ? allQuestions[id as string] : null;
 
-    // Si aún no tenemos los pasos o el ID, mostramos un cargando para evitar que 
-    // se renderice "fumar" por defecto por un milisegundo.
     if (!steps) {
         return (
-            <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size="large" color="#6B46C1" />
             </View>
         );
@@ -68,8 +67,6 @@ export default function RegistroCuestionario() {
             setCurrentStepIndex(currentStepIndex + 1);
             setSelectedOption(null);
         } else {
-            console.log("Cuestionario finalizado. Respuestas:", newResponses);
-            // Ahora redirigimos a la pantalla informativa que creamos antes
             router.replace("/info-habito");
         }
     };
