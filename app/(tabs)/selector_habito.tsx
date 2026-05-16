@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, SafeAreaView } from 'react-native';
-import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import React from 'react';
+import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 
 const { width } = Dimensions.get('window');
@@ -28,12 +28,12 @@ export default function SelectorHabito() {
       route: '/registro/procrastinar'
     },
     {
-      id: 'comida',
+      id: 'ansiedad',
       title: 'Ansiedad por Comer',
       subtitle: 'Alimentación consciente',
       icon: 'fast-food-outline',
       color: '#FFD54F',
-      route: '/registro/comida'
+      route: '/registro/ansiedad'
     },
     {
       id: 'doomscrolling',
