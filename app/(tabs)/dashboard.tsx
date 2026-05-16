@@ -2,11 +2,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { Dimensions, KeyboardAvoidingView, Modal, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
-// 1. Datos organizados
+
 const contenidoRescate = {
   juegos: [
     { id: 1, texto: "❌ Tres en Raya ⭕" },
@@ -46,7 +46,7 @@ function calcularGanador(cuadrados: any[]) {
 export default function Dashboard() {
   const router = useRouter();
 
-  // --- CONFIGURACIÓN ---
+
   const simboloCartaMemoria = '❓';
   const emojisSentimientos = [
     { emoji: '😔', label: 'Mal' },
@@ -56,15 +56,14 @@ export default function Dashboard() {
     { emoji: '🔥', label: 'Fuerte' }
   ];
 
-  // --- ESTADOS ---
+
   const [modalVisible, setModalVisible] = useState(false);
   const [categoria, setCategoria] = useState<'juegos' | 'retos' | 'frases' | null>(null);
 
-  // Estados Journal
   const [sentimientoSeleccionado, setSentimientoSeleccionado] = useState<string | null>(null);
   const [notaDiaria, setNotaDiaria] = useState('');
 
-  // Estados Juegos
+
   const [juegoActivo, setJuegoActivo] = useState(false);
   const [tablero, setTablero] = useState(Array(9).fill(null));
   const [esTurnoX, setEsTurnoX] = useState(true);
@@ -76,12 +75,12 @@ export default function Dashboard() {
   const [posicion, setPosicion] = useState({ top: 50, left: 50 });
   const [puntos, setPuntos] = useState(0);
 
-  // Estados Retos
+
   const [retoEjecutandose, setRetoEjecutandose] = useState<any | null>(null);
   const [progresoReto, setProgresoReto] = useState(0);
   const [segundos, setSegundos] = useState(0);
 
-  // Estado Frases
+
   const [fraseActual, setFraseActual] = useState(contenidoRescate.frases[0]);
 
   useEffect(() => {
@@ -121,6 +120,10 @@ export default function Dashboard() {
     setCategoria(null); setJuegoActivo(false); setMemoriaActiva(false); setReflejoActivo(false); setRetoEjecutandose(null);
     generarFraseAleatoria();
     setModalVisible(true);
+  };
+
+  const abrirRetosDiarios = () => {
+    alert("¡Próximamente: Tus retos diarios personalizados!");
   };
 
   return (
@@ -166,24 +169,9 @@ export default function Dashboard() {
                 </View>
               </View>
 
-              {/* --- NUEVO APARTADO: JOURNAL --- */}
-              <View style={styles.journalSection}>
-                <Text style={styles.journalTitle}>¿Cómo te sientes hoy?</Text>
-                <View style={styles.emojiContainer}>
-                  {emojisSentimientos.map((item) => (
-                    <TouchableOpacity
-                      key={item.label}
-                      style={[
-                        styles.emojiButton,
-                        sentimientoSeleccionado === item.label && styles.emojiButtonActive
-                      ]}
-                      onPress={() => setSentimientoSeleccionado(item.label)}
-                    >
-                      <Text style={styles.emojiText}>{item.emoji}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
 
+              <View style={styles.journalSection}>
+                <Text style={styles.journalTitle}>Reflexión del día</Text>
                 <View style={styles.notaContainer}>
                   <TextInput
                     style={styles.inputNota}
@@ -199,12 +187,44 @@ export default function Dashboard() {
                 </View>
               </View>
 
-              <TouchableOpacity style={styles.sosButton} onPress={abrirRescate}>
-                <LinearGradient colors={['#FEF2F2', '#FFF1F2']} style={styles.sosGradient}>
-                  <Ionicons name="alert-circle" size={24} color="#EF4444" />
-                  <Text style={styles.sosText}>TENGO UNA TENTACIÓN</Text>
-                </LinearGradient>
-              </TouchableOpacity>
+
+              <View style={styles.horizontalGrid}>
+
+                <TouchableOpacity style={styles.activityButton} onPress={abrirRetosDiarios}>
+                  <LinearGradient colors={['#E8FDF0', '#DCFCE7']} style={styles.activityGradient}>
+                    <Ionicons name="trophy-outline" size={24} color="#22C55E" />
+                    <Text style={styles.activityText}>RETOS DIARIOS</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+
+
+                <TouchableOpacity style={styles.sosButton} onPress={abrirRescate}>
+                  <LinearGradient colors={['#FEF2F2', '#FFF1F2']} style={styles.sosGradient}>
+                    <Ionicons name="alert-circle" size={24} color="#EF4444" />
+                    <Text style={styles.sosText}>SOS TENTACIÓN</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
+
+
+              <View style={styles.moodSection}>
+                <Text style={styles.moodTitle}>¿Cómo te has sentido hoy?</Text>
+                <View style={styles.emojiContainer}>
+                  {emojisSentimientos.map((item) => (
+                    <TouchableOpacity
+                      key={item.label}
+                      style={[
+                        styles.emojiButton,
+                        sentimientoSeleccionado === item.label && styles.emojiButtonActive
+                      ]}
+                      onPress={() => setSentimientoSeleccionado(item.label)}
+                    >
+                      <Text style={styles.emojiText}>{item.emoji}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -348,19 +368,30 @@ const styles = StyleSheet.create({
   widgetValue: { fontSize: 18, fontWeight: '800', color: '#111827' },
 
   // ESTILOS JOURNAL
-  journalSection: { backgroundColor: '#F9FAFB', borderRadius: 25, padding: 15, marginBottom: 20 },
+  journalSection: { backgroundColor: '#F9FAFB', borderRadius: 25, padding: 15, marginBottom: 15 },
   journalTitle: { fontSize: 16, fontWeight: '800', color: '#1F2937', marginBottom: 12 },
-  emojiContainer: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15 },
-  emojiButton: { padding: 10, borderRadius: 15, backgroundColor: 'white', width: '18%', alignItems: 'center', elevation: 2 },
-  emojiButtonActive: { backgroundColor: '#8E5CF6', borderWidth: 1, borderColor: '#5D45DB' },
-  emojiText: { fontSize: 20 },
   notaContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 15, paddingHorizontal: 10, borderWidth: 1, borderColor: '#E5E7EB' },
   inputNota: { flex: 1, paddingVertical: 10, fontSize: 14, color: '#374151', minHeight: 40 },
   btnGuardarNota: { padding: 5 },
 
-  sosButton: { marginTop: 5 },
-  sosGradient: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 18, borderRadius: 25 },
-  sosText: { color: '#EF4444', fontWeight: '800', fontSize: 14, marginLeft: 10 },
+
+  horizontalGrid: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 25 },
+  activityButton: { width: '48%' },
+  activityGradient: { flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 15, borderRadius: 25, borderWidth: 1, borderColor: '#BBF7D0', height: 80 },
+  activityText: { color: '#16A34A', fontWeight: '800', fontSize: 12, marginTop: 8, textAlign: 'center' },
+
+  sosButton: { width: '48%' },
+  sosGradient: { flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 15, borderRadius: 25, height: 80 },
+  sosText: { color: '#EF4444', fontWeight: '800', fontSize: 12, marginTop: 8, textAlign: 'center' },
+
+
+  moodSection: { backgroundColor: '#F9FAFB', borderRadius: 25, padding: 15, marginTop: 5 },
+  moodTitle: { fontSize: 16, fontWeight: '800', color: '#1F2937', marginBottom: 12, textAlign: 'center' },
+  emojiContainer: { flexDirection: 'row', justifyContent: 'space-between' },
+  emojiButton: { padding: 10, borderRadius: 15, backgroundColor: 'white', width: '18%', alignItems: 'center', elevation: 2 },
+  emojiButtonActive: { backgroundColor: '#8E5CF6', borderWidth: 1, borderColor: '#5D45DB' },
+  emojiText: { fontSize: 20 },
+
   centrarModal: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' },
   modalContenido: { width: '85%', backgroundColor: 'white', borderRadius: 35, padding: 25, alignItems: 'center' },
   modalTitulo: { fontSize: 20, fontWeight: '900', color: '#1F2937', marginBottom: 15, textAlign: 'center' },
