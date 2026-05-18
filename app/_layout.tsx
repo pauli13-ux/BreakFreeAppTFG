@@ -6,7 +6,7 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export const unstable_settings = {
-  // Asegúrate de que esto apunte a tu ruta principal inicial
+  
   initialRouteName: '(tabs)',
 };
 

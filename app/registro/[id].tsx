@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useState, useEffect } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import React, { useState } from 'react';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function RegistroCuestionario() {
     const { id } = useLocalSearchParams();
@@ -10,7 +10,7 @@ export default function RegistroCuestionario() {
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const [responses, setResponses] = useState<Record<number, string>>({});
-
+    console.log("CUESTIONARIO RECIBE ID:", id);
     const allQuestions: any = {
         fumar: [
             { title: "¿Cuántos cigarrillos fumas al día?", options: [{ id: '1', label: 'Menos de 5' }, { id: '2', label: 'Entre 5 y 10' }, { id: '3', label: 'Entre 10 y 20' }, { id: '4', label: 'Más de 20' }] },
@@ -42,8 +42,7 @@ export default function RegistroCuestionario() {
         ]
     };
 
-    // Usamos el id para buscar los steps. 
-    // Solo si id es nulo o no existe en allQuestions, ponemos un valor por defecto.
+    
     const steps = id ? allQuestions[id as string] : null;
 
     if (!steps) {
@@ -67,7 +66,10 @@ export default function RegistroCuestionario() {
             setCurrentStepIndex(currentStepIndex + 1);
             setSelectedOption(null);
         } else {
-            router.replace("/info-habito");
+           router.replace({
+            pathname: "/info-habito",
+            params: { id: id }
+        });
         }
     };
 
