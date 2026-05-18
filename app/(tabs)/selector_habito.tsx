@@ -60,7 +60,7 @@ export default function SelectorHabito() {
             <TouchableOpacity
               key={habito.id}
               style={[styles.card, { borderBottomColor: habito.color, borderBottomWidth: 4 }]}
-              onPress={() => router.push(habito.route as any)}
+              onPress={() => router.push(`/registro/${habito.id}`)}
               activeOpacity={0.7}
             >
               <View style={[styles.iconCircle, { backgroundColor: habito.color + '20' }]}>

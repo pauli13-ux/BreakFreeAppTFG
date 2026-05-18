@@ -3,7 +3,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-// Contenido dinámico para cada hábito
+
 const habitContent: any = {
     ansiedad: {
         title: "Ansiedad por comer",
@@ -19,7 +19,7 @@ const habitContent: any = {
     fumar: {
         title: "Dejar de fumar",
         subtitle: "Recupera tu salud y ahorra dinero cada día.",
-        icon: "no-smoking",
+        icon: 'ban',
         color: "#F56565",
         tips: [
             "Evita los disparadores como el café o el alcohol.",
@@ -52,7 +52,7 @@ const habitContent: any = {
     doomscrolling: {
         title: "Desconexión Digital",
         subtitle: "Recupera el control de tu tiempo y atención.",
-        icon: "smartphone",
+        icon: 'reload-circle-outline',
         color: "#805AD5",
         tips: [
             "Pon límites de tiempo en tus redes sociales.",
@@ -66,7 +66,7 @@ export default function InfoHabito() {
     const { id } = useLocalSearchParams();
     const router = useRouter();
 
-    // Obtenemos la info según el ID (con fallback a ansiedad por si acaso)
+   
     const content = habitContent[id as string] || habitContent.ansiedad;
 
     return (
