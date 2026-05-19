@@ -1,0 +1,6 @@
+com\example\demo\DemoApplication.class
+com\example\demo\journal\controller\JournalController.class
+com\example\demo\user\repository\UserRepository.class
+com\example\demo\user\model\User.class
+com\example\demo\journal\model\Journal.class
+com\example\demo\journal\repository\JournalRepository.class
