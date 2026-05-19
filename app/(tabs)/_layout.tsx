@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs, useRouter } from "expo-router";
+import Head from "expo-router/head";
 import React from "react";
 import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
 
@@ -7,43 +8,56 @@ export default function TabLayout() {
   const router = useRouter();
 
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: true,
-        headerTransparent: true,
-        headerTitle: "",
+    <>
+      <Head>
+        <title>BreakFree</title>
+        {/* Usamos la ruta estática resuelta de Expo para que pinte la flor */}
+        <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+      </Head>
 
-        headerLeft: () => (
-          <View style={styles.topHeaderCircles}>
-            {/* Círculo 1: Info */}
-            <TouchableOpacity
-              style={styles.circleHeaderButton}
-              onPress={() => router.push("/modal")}
-            >
-              <Ionicons
-                name="information-circle-outline"
-                size={26}
-                color="#553C9A"
-              />
-            </TouchableOpacity>
+      <Tabs
+        screenOptions={{
+          headerShown: true,
+          headerTransparent: true,
+          headerTitle: "",
+          headerLeft: () => (
+            <View style={styles.topHeaderCircles}>
+              <TouchableOpacity
+                style={styles.circleHeaderButton}
+                onPress={() => router.push("/modal")}
+              >
+                <Ionicons
+                  name="information-circle-outline"
+                  size={26}
+                  color="#553C9A"
+                />
+              </TouchableOpacity>
 
-            {/* Círculo 2: Settings */}
-            <TouchableOpacity
-              style={[styles.circleHeaderButton, { marginLeft: 12 }]}
-              onPress={() => router.push("/settings")}
-            >
-              <Ionicons name="settings-outline" size={24} color="#553C9A" />
-            </TouchableOpacity>
-          </View>
-        ),
-        tabBarStyle: { display: "none" },
-      }}
-    >
-      <Tabs.Screen name="dashboard" />
-      <Tabs.Screen name="selector_habito" />
-      <Tabs.Screen name="register" options={{ headerShown: false }} />
-      <Tabs.Screen name="index" options={{ headerShown: false }} />
-    </Tabs>
+              <TouchableOpacity
+                style={[styles.circleHeaderButton, { marginLeft: 12 }]}
+                onPress={() => router.push("/settings")}
+              >
+                <Ionicons name="settings-outline" size={24} color="#553C9A" />
+              </TouchableOpacity>
+            </View>
+          ),
+          tabBarStyle: { display: "none" },
+        }}
+      >
+        <Tabs.Screen name="[habito]" />
+        <Tabs.Screen name="selector_habito" />
+        <Tabs.Screen name="register" options={{ headerShown: false }} />
+        <Tabs.Screen name="index" options={{ headerShown: false }} />
+
+        <Tabs.Screen
+          name="historial-journal"
+          options={{
+            href: null,
+            headerShown: false,
+          }}
+        />
+      </Tabs>
+    </>
   );
 }
 
