@@ -16,7 +16,6 @@ import {
   View
 } from 'react-native';
 
-
 import { contenidoRescatePorHabito } from '../../constants/habitoData';
 
 const { width } = Dimensions.get('window');
@@ -25,6 +24,44 @@ const dias = [
   { d: 'L', active: false }, { d: 'M', active: false }, { d: 'X', active: false },
   { d: 'J', active: true }, { d: 'V', active: false }, { d: 'S', active: false }, { d: 'D', active: false }
 ];
+
+const RETOS_POR_HABITO: Record<string, string[]> = {
+  tabaco: [
+    "No fumar justo después de las comidas principales",
+    "Retrasar el primer cigarrillo del día 1 hora",
+    "Cambiar el cigarrillo del café por un chicle o infusión",
+    "Superar un momento de ansiedad respirando hondo 3 minutos",
+    "Guardar en una hucha el dinero que habrías gastado hoy"
+  ],
+  ansiedadComer: [
+    "Beber un vaso de agua grande antes de asaltar la nevera",
+    "Esperar 15 minutos cuando sientas antojo antes de comer algo",
+    "Sustituir un snack ultraprocessed por una pieza de fruta",
+    "Comer sin distracciones (sin mirar la televisión ni el móvil)",
+    "Hacer 5 respiraciones conscientes antes de tu comida principal"
+  ],
+  procrastinar: [
+    "Hacer la tarea más difícil o pesada a primera hora de la mañana",
+    "Trabajar 25 minutes seguidos sin mirar las notificaciones (Pomodoro)",
+    "Escribir en una lista solo las 3 tareas clave para el día de hoy",
+    "Dar el primer paso de una tarea pendiente durante solo 5 minutos",
+    "Dejar tu espacio de trabajo limpio y ordenado al terminar"
+  ],
+  doomscrolling: [
+    "No usar el teléfono móvil durante la primera hora de la mañana",
+    "Establecer un límite de 15 minutos en tu red social más adictiva",
+    "Almorzar o cenar dejando el dispositivo en otra habitación",
+    "Poner la pantalla en modo escala de grises para reducir el estímulo",
+    "Dejar el móvil lejos de la cama 45 minutos antes de irte a dormir"
+  ],
+  default: [
+    "Completar tu reflexión en el diario hoy",
+    "Identificar tu mayor tentación de la mañana y esquivarla",
+    "Identificar tu mayor tentación de la tarde y esquivarla",
+    "Tomarte 5 minutos para respirar conscientemente",
+    "Revisar tus motivos para cambiar al final de la jornada"
+  ]
+};
 
 function calcularGanador(cuadrados: any[]) {
   const lineas = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
@@ -39,14 +76,11 @@ export default function Dashboard() {
   const router = useRouter();
   const params = useLocalSearchParams();
 
-
   let habitoDetectado: any = params.habito || params.habitoSeleccionado;
 
   if (!habitoDetectado && typeof window !== 'undefined') {
-
     const queryParams = new URLSearchParams(window.location.search);
     habitoDetectado = queryParams.get('habito') || queryParams.get('habitoSeleccionado');
-
 
     if (!habitoDetectado && window.location.href.includes('habito=')) {
       const parts = window.location.href.split('habito=');
@@ -56,7 +90,6 @@ export default function Dashboard() {
       if (parts[1]) habitoDetectado = parts[1].split('&')[0];
     }
   }
-
 
   const habitoActivo = (['tabaco', 'ansiedadComer', 'procrastinar', 'doomscrolling'].includes(habitoDetectado)
     ? habitoDetectado
@@ -71,21 +104,22 @@ export default function Dashboard() {
     { emoji: '🔥', label: 'Fuerte' }
   ];
 
-
   const [modalVisible, setModalVisible] = useState(false);
   const [modalJournalVisible, setModalJournalVisible] = useState(false);
-  const [categoria, setCategoria] = useState<'juegos' | 'retos' | 'frases' | null>(null);
 
+
+  const [modalRetosVisible, setModalRetosVisible] = useState(false);
+  const [retosMarcados, setRetosMarcados] = useState<Record<number, boolean>>({});
+
+  const [currentCategoria, setCategoria] = useState<'juegos' | 'retos' | 'frases' | null>(null);
 
   const [sentimientoSeleccionado, setSentimientoSeleccionado] = useState<string | null>(null);
   const [notaDiaria, setNotaDiaria] = useState('');
   const [diarioGuardado, setDiarioGuardado] = useState(false);
 
-
   const [juegoActivo, setJuegoActivo] = useState(false);
   const [tablero, setTablero] = useState(Array(9).fill(null));
   const [esTurnoX, setEsTurnoX] = useState(true);
-
 
   const [memoriaActiva, setMemoriaActiva] = useState(false);
   const [cartas, setCartas] = useState<{ id: number, emoji: string, revelada: boolean, resuelta: boolean }[]>([]);
@@ -95,11 +129,12 @@ export default function Dashboard() {
   const [posicion, setPosicion] = useState({ top: 50, left: 50 });
   const [puntos, setPuntos] = useState(0);
 
-
   const [retoEjecutandose, setRetoEjecutandose] = useState<any | null>(null);
   const [progresoReto, setProgresoReto] = useState(0);
   const [segundos, setSegundos] = useState(0);
   const [fraseActual, setFraseActual] = useState({ id: 1, texto: "" });
+
+  const retosDelDia = RETOS_POR_HABITO[habitoActivo] || RETOS_POR_HABITO.default || [];
 
   useEffect(() => {
     let intervalo: any;
@@ -157,7 +192,14 @@ export default function Dashboard() {
   };
 
   const abrirRetosDiarios = () => {
-    alert("¡Próximamente: Tus retos diarios de consolidación automatizados!");
+    setModalRetosVisible(true);
+  };
+
+  const toggleRetoIndice = (index: number) => {
+    setRetosMarcados(prev => ({
+      ...prev,
+      [index]: !prev[index]
+    }));
   };
 
   const guardarReflexionCompleta = () => {
@@ -298,8 +340,8 @@ export default function Dashboard() {
                 <TouchableOpacity
                   style={styles.btnHistory}
                   onPress={() => {
-                    setModalJournalVisible(false); // Cierra el modal del diario para que no se superponga
-                    router.push('/historial-journal'); // Te manda directo a la nueva pantalla
+                    setModalJournalVisible(false);
+                    router.push('/historial-journal');
                   }}
                   activeOpacity={0.7}
                 >
@@ -349,11 +391,65 @@ export default function Dashboard() {
       </Modal>
 
 
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalRetosVisible}
+        onRequestClose={() => setModalRetosVisible(false)}
+      >
+        <View style={styles.modalOverlayJournal}>
+          <View style={[styles.modalContentJournal, { height: '75%' }]}>
+            <View style={styles.modalJournalHeader}>
+              <View>
+                <Text style={styles.modalJournalTitle}>Retos de Hoy</Text>
+                <Text style={[styles.modalJournalDate, { color: '#22C55E' }]}>Objetivos de consolidación</Text>
+              </View>
+              <TouchableOpacity onPress={() => setModalRetosVisible(false)}>
+                <Ionicons name="close-circle" size={32} color="#D1D5DB" />
+              </TouchableOpacity>
+            </View>
+
+            <Text style={{ fontSize: 14, color: '#6B7280', marginBottom: 15, fontWeight: '500' }}>
+              Completa las 5 acciones clave diseñadas para debilitar el hábito de: <Text style={{ fontWeight: 'bold', color: '#111827' }}>{habitoActivo.toUpperCase()}</Text>
+            </Text>
+
+            <ScrollView showsVerticalScrollIndicator={false} style={{ marginVertical: 10 }}>
+              {retosDelDia.map((textoReto, index) => {
+                const completado = !!retosMarcados[index];
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={[styles.filaRetoCard, completado && styles.filaRetoCardCompletada]}
+                    onPress={() => toggleRetoIndice(index)}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[styles.textoRetoItem, completado && styles.textoRetoItemCompletado]}>
+                      {textoReto}
+                    </Text>
+                    <View style={[styles.checkboxReto, completado && styles.checkboxRetoChecked]}>
+                      {completado && <Ionicons name="checkmark-sharp" size={14} color="white" />}
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+
+            <TouchableOpacity
+              style={[styles.btnGuardarJournal, { backgroundColor: '#22C55E', marginTop: 10 }]}
+              onPress={() => setModalRetosVisible(false)}
+            >
+              <Text style={styles.btnGuardarJournalTexto}>Listo por hoy</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <View style={styles.centrarModal}>
           <View style={styles.modalContenido}>
-            {categoria === 'frases' ? (
-              <View style={styles.contenedorFrases}>
+            {currentCategoria === 'frases' ? (
+              <View style={styles.gameContainer}>
                 <Text style={styles.modalTitulo}>Inspiración ✨</Text>
                 <LinearGradient colors={['#F472B6', '#DB2777']} style={styles.tarjetaFrase}>
                   <Ionicons name="chatbubbles-outline" size={30} color="rgba(255,255,255,0.4)" style={{ alignSelf: 'flex-start' }} />
@@ -430,7 +526,7 @@ export default function Dashboard() {
               </View>
             ) : (
               <>
-                {!categoria ? (
+                {!currentCategoria ? (
                   <>
                     <Text style={styles.modalTitulo}>SOS {contenidoRescatePorHabito[habitoActivo].titulo}</Text>
                     <TouchableOpacity style={[styles.botonMenu, { backgroundColor: '#8E5CF6' }]} onPress={() => setCategoria('juegos')}><Text style={styles.textoBoton}>🎮 Juegos</Text></TouchableOpacity>
@@ -439,14 +535,14 @@ export default function Dashboard() {
                   </>
                 ) : (
                   <>
-                    <Text style={styles.modalTitulo}>{categoria.toUpperCase()}</Text>
-                    {categoria === 'juegos' ? (
+                    <Text style={styles.modalTitulo}>{currentCategoria.toUpperCase()}</Text>
+                    {currentCategoria === 'juegos' ? (
                       <View style={{ width: '100%' }}>
                         <TouchableOpacity style={styles.opcionCajaJuego} onPress={() => { setJuegoActivo(true); setTablero(Array(9).fill(null)); }}><Text style={styles.opcionTextoJuego}>❌ Tres en Raya</Text></TouchableOpacity>
                         <TouchableOpacity style={styles.opcionCajaJuego} onPress={iniciarMemoria}><Text style={styles.opcionTextoJuego}>🧠 Memoria</Text></TouchableOpacity>
                         <TouchableOpacity style={styles.opcionCajaJuego} onPress={() => { setReflejoActivo(true); setPuntos(0); moverEmoji(); }}><Text style={styles.opcionTextoJuego}>⚡ Reflejos</Text></TouchableOpacity>
                       </View>
-                    ) : categoria === 'retos' ? (
+                    ) : currentCategoria === 'retos' ? (
                       contenidoRescatePorHabito[habitoActivo].retos.map((r) => (
                         <TouchableOpacity key={r.id} style={styles.opcionCaja} onPress={() => { setRetoEjecutandose(r); setProgresoReto(0); setSegundos(r.meta); }}>
                           <Text style={styles.opcionTexto}>🔥 {r.texto}</Text>
@@ -548,12 +644,53 @@ const styles = StyleSheet.create({
   emojiReflejo: { position: 'absolute' },
   ganasteTexto: { fontSize: 18, fontWeight: 'bold', color: '#4ADE80', marginVertical: 10 },
   circuloTiempo: { width: 100, height: 100, borderRadius: 50, borderWidth: 6, borderColor: '#4ADE80', justifyContent: 'center', alignItems: 'center', marginVertical: 20 },
-  numeroTiempo: { fontSize: 32, fontWeight: '900', color: '#111827' },
-  contenedorReps: { alignItems: 'center', marginVertical: 10 },
+  numeroTiempo: { fontSize: 24, fontWeight: '900', color: '#111827' },
+  contenedorReps: { alignItems: 'center', marginVertical: 15 },
   btnContar: { backgroundColor: '#4ADE80', width: 60, height: 60, borderRadius: 30, justifyContent: 'center', alignItems: 'center', marginTop: 10 },
-  contenedorFrases: { width: '100%', alignItems: 'center' },
-  tarjetaFrase: { width: '100%', padding: 25, borderRadius: 25, minHeight: 180, justifyContent: 'center', alignItems: 'center' },
-  textoFrasePrincipal: { color: 'white', fontSize: 18, fontWeight: '800', textAlign: 'center', fontStyle: 'italic', lineHeight: 26, marginVertical: 10 },
-  btnNuevaFrase: { marginTop: 15, backgroundColor: '#F3F4F6', paddingVertical: 12, paddingHorizontal: 15, borderRadius: 15, borderWidth: 1, borderColor: '#F472B6' },
-  btnNuevaFraseTexto: { color: '#374151', fontWeight: '700', fontSize: 14 }
+  tarjetaFrase: { width: '100%', padding: 20, borderRadius: 25, marginVertical: 15 },
+  textoFrasePrincipal: { color: 'white', fontSize: 18, fontWeight: '700', textAlign: 'center', fontStyle: 'italic', marginVertical: 10 },
+  btnNuevaFrase: { backgroundColor: '#FFF', borderWidth: 1, borderColor: '#F472B6', padding: 12, borderRadius: 15, width: '100%', alignItems: 'center' },
+  btnNuevaFraseTexto: { color: '#DB2777', fontWeight: '700', fontSize: 14 },
+
+
+  filaRetoCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    padding: 16,
+    borderRadius: 20,
+    marginBottom: 10
+  },
+  filaRetoCardCompletada: {
+    backgroundColor: '#DCFCE7',
+    borderColor: '#BBF7D0'
+  },
+  textoRetoItem: {
+    flex: 1,
+    fontSize: 14,
+    color: '#374151',
+    fontWeight: '600',
+    paddingRight: 10
+  },
+  textoRetoItemCompletado: {
+    color: '#16A34A',
+    textDecorationLine: 'line-through'
+  },
+  checkboxReto: {
+    width: 24,
+    height: 24,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#D1D5DB',
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  checkboxRetoChecked: {
+    backgroundColor: '#22C55E',
+    borderColor: '#22C55E'
+  }
 });
