@@ -10,8 +10,10 @@ export default function RegistroCuestionario() {
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const [responses, setResponses] = useState<Record<number, string>>({});
+
     console.log("CUESTIONARIO RECIBE ID:", id);
-    const allQuestions: any = {
+
+    const allQuestions: Record<string, { title: string; options: { id: string; label: string }[] }[]> = {
         fumar: [
             { title: "¿Cuántos cigarrillos fumas al día?", options: [{ id: '1', label: 'Menos de 5' }, { id: '2', label: 'Entre 5 y 10' }, { id: '3', label: 'Entre 10 y 20' }, { id: '4', label: 'Más de 20' }] },
             { title: "¿Cuánto tiempo pasa desde que despiertas hasta el primero?", options: [{ id: '1', label: 'Menos de 5 min' }, { id: '2', label: '6 a 30 min' }, { id: '3', label: '31 a 60 min' }, { id: '4', label: 'Más de una hora' }] },
@@ -42,7 +44,6 @@ export default function RegistroCuestionario() {
         ]
     };
 
-    
     const steps = id ? allQuestions[id as string] : null;
 
     if (!steps) {
@@ -66,10 +67,11 @@ export default function RegistroCuestionario() {
             setCurrentStepIndex(currentStepIndex + 1);
             setSelectedOption(null);
         } else {
-           router.replace({
-            pathname: "/info-habito",
-            params: { id: id }
-        });
+
+            router.replace({
+                pathname: "/info-habito",
+                params: { id: id }
+            });
         }
     };
 

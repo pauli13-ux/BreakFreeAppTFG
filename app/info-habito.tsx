@@ -3,7 +3,6 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-
 const habitContent: any = {
     ansiedad: {
         title: "Ansiedad por comer",
@@ -25,17 +24,6 @@ const habitContent: any = {
             "Evita los disparadores como el café o el alcohol.",
             "Limpia tu coche y ropa para eliminar el olor a tabaco.",
             "Usa sustitutos cuando sientas la necesidad urgente."
-        ]
-    },
-    sedentarismo: {
-        title: "Vida Activa",
-        subtitle: "Pequeños movimientos generan grandes cambios.",
-        icon: "walk",
-        color: "#48BB78",
-        tips: [
-            "Levántate cada hora y camina 5 minutos.",
-            "Usa las escaleras en lugar del ascensor.",
-            "Intenta llegar a los 10.000 pasos diarios."
         ]
     },
     procrastinar: {
@@ -66,15 +54,20 @@ export default function InfoHabito() {
     const { id } = useLocalSearchParams();
     const router = useRouter();
 
-   
     const content = habitContent[id as string] || habitContent.ansiedad;
+
+
+    let idDashboard = 'tabaco';
+    if (id === 'ansiedad') idDashboard = 'ansiedadComer';
+    if (id === 'procrastinar') idDashboard = 'procrastinar';
+    if (id === 'doomscrolling') idDashboard = 'doomscrolling';
 
     return (
         <View style={styles.container}>
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 {/* Header con Icono */}
                 <View style={[styles.iconCircle, { backgroundColor: content.color + '20' }]}>
-                    <Ionicons name={content.icon} size={60} color={content.color} />
+                    <Ionicons name={content.icon as any} size={60} color={content.color} />
                 </View>
 
                 <Text style={styles.mainTitle}>{content.title}</Text>
@@ -82,7 +75,7 @@ export default function InfoHabito() {
 
                 <View style={styles.divider} />
 
-                {/* Sección de Consejos */}
+
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Primeros pasos</Text>
                     {content.tips.map((tip: string, index: number) => (
@@ -94,11 +87,17 @@ export default function InfoHabito() {
                 </View>
             </ScrollView>
 
-            {/* Footer con el botón para empezar de verdad */}
+
             <View style={styles.footer}>
                 <TouchableOpacity
                     style={[styles.startButton, { backgroundColor: content.color }]}
-                    onPress={() => router.replace('/dashboard')} // O a donde quieras llevar al usuario
+                    onPress={() => {
+
+                        router.replace({
+                            pathname: '/(tabs)/[habito]',
+                            params: { habito: idDashboard }
+                        });
+                    }}
                 >
                     <Text style={styles.startButtonText}>¡Empezar ahora!</Text>
                 </TouchableOpacity>
