@@ -297,7 +297,10 @@ export default function Dashboard() {
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <TouchableOpacity
                   style={styles.btnHistory}
-                  onPress={() => alert(`Historial: Cargando reflexiones de ${contenidoRescatePorHabito[habitoActivo].titulo}`)}
+                  onPress={() => {
+                    setModalJournalVisible(false); // Cierra el modal del diario para que no se superponga
+                    router.push('/historial-journal'); // Te manda directo a la nueva pantalla
+                  }}
                   activeOpacity={0.7}
                 >
                   <Ionicons name="time-outline" size={22} color="#8E5CF6" />

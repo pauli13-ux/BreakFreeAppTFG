@@ -15,7 +15,6 @@ export default function TabLayout() {
 
         headerLeft: () => (
           <View style={styles.topHeaderCircles}>
-            {/* Círculo 1: Info */}
             <TouchableOpacity
               style={styles.circleHeaderButton}
               onPress={() => router.push("/modal")}
@@ -27,7 +26,6 @@ export default function TabLayout() {
               />
             </TouchableOpacity>
 
-            {/* Círculo 2: Settings */}
             <TouchableOpacity
               style={[styles.circleHeaderButton, { marginLeft: 12 }]}
               onPress={() => router.push("/settings")}
@@ -39,10 +37,19 @@ export default function TabLayout() {
         tabBarStyle: { display: "none" },
       }}
     >
-      <Tabs.Screen name="dashboard" />
+      <Tabs.Screen name="[habito]" />
+
       <Tabs.Screen name="selector_habito" />
       <Tabs.Screen name="register" options={{ headerShown: false }} />
       <Tabs.Screen name="index" options={{ headerShown: false }} />
+
+      <Tabs.Screen
+        name="historial-journal"
+        options={{
+          href: null,
+          headerShown: false
+        }}
+      />
     </Tabs>
   );
 }
