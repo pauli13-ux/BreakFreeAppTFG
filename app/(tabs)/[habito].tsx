@@ -1,7 +1,14 @@
+<<<<<<< HEAD:app/(tabs)/dashboard.tsx
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router"; // 🆕 Importamos useLocalSearchParams
 import React, { useEffect, useState } from "react";
+=======
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+>>>>>>> ba0cb8487fb74c7c1d0aa711a43e33124ba9a000:app/(tabs)/[habito].tsx
 import {
   Dimensions,
   KeyboardAvoidingView,
@@ -13,6 +20,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+<<<<<<< HEAD:app/(tabs)/dashboard.tsx
   View,
 } from "react-native";
 
@@ -121,6 +129,15 @@ const contenidoRescatePorHabito = {
   },
 };
 
+=======
+  View
+} from 'react-native';
+
+import { contenidoRescatePorHabito } from '../../constants/habitoData';
+
+const { width } = Dimensions.get('window');
+
+>>>>>>> ba0cb8487fb74c7c1d0aa711a43e33124ba9a000:app/(tabs)/[habito].tsx
 const dias = [
   { d: "L", active: false },
   { d: "M", active: false },
@@ -130,6 +147,44 @@ const dias = [
   { d: "S", active: false },
   { d: "D", active: false },
 ];
+
+const RETOS_POR_HABITO: Record<string, string[]> = {
+  tabaco: [
+    "No fumar justo después de las comidas principales",
+    "Retrasar el primer cigarrillo del día 1 hora",
+    "Cambiar el cigarrillo del café por un chicle o infusión",
+    "Superar un momento de ansiedad respirando hondo 3 minutos",
+    "Guardar en una hucha el dinero que habrías gastado hoy"
+  ],
+  ansiedadComer: [
+    "Beber un vaso de agua grande antes de asaltar la nevera",
+    "Esperar 15 minutos cuando sientas antojo antes de comer algo",
+    "Sustituir un snack ultraprocessed por una pieza de fruta",
+    "Comer sin distracciones (sin mirar la televisión ni el móvil)",
+    "Hacer 5 respiraciones conscientes antes de tu comida principal"
+  ],
+  procrastinar: [
+    "Hacer la tarea más difícil o pesada a primera hora de la mañana",
+    "Trabajar 25 minutes seguidos sin mirar las notificaciones (Pomodoro)",
+    "Escribir en una lista solo las 3 tareas clave para el día de hoy",
+    "Dar el primer paso de una tarea pendiente durante solo 5 minutos",
+    "Dejar tu espacio de trabajo limpio y ordenado al terminar"
+  ],
+  doomscrolling: [
+    "No usar el teléfono móvil durante la primera hora de la mañana",
+    "Establecer un límite de 15 minutos en tu red social más adictiva",
+    "Almorzar o cenar dejando el dispositivo en otra habitación",
+    "Poner la pantalla en modo escala de grises para reducir el estímulo",
+    "Dejar el móvil lejos de la cama 45 minutos antes de irte a dormir"
+  ],
+  default: [
+    "Completar tu reflexión en el diario hoy",
+    "Identificar tu mayor tentación de la mañana y esquivarla",
+    "Identificar tu mayor tentación de la tarde y esquivarla",
+    "Tomarte 5 minutos para respirar conscientemente",
+    "Revisar tus motivos para cambiar al final de la jornada"
+  ]
+};
 
 function calcularGanador(cuadrados: any[]) {
   const lineas = [
@@ -156,11 +211,34 @@ function calcularGanador(cuadrados: any[]) {
 
 export default function Dashboard() {
   const router = useRouter();
+<<<<<<< HEAD:app/(tabs)/dashboard.tsx
 
   const params = useLocalSearchParams();
 
   const habitoActivo =
     (params.habitoSeleccionado as "tabaco" | "ansiedadComer") || "tabaco";
+=======
+  const params = useLocalSearchParams();
+
+  let habitoDetectado: any = params.habito || params.habitoSeleccionado;
+
+  if (!habitoDetectado && typeof window !== 'undefined') {
+    const queryParams = new URLSearchParams(window.location.search);
+    habitoDetectado = queryParams.get('habito') || queryParams.get('habitoSeleccionado');
+
+    if (!habitoDetectado && window.location.href.includes('habito=')) {
+      const parts = window.location.href.split('habito=');
+      if (parts[1]) habitoDetectado = parts[1].split('&')[0];
+    } else if (!habitoDetectado && window.location.href.includes('habitoSeleccionado=')) {
+      const parts = window.location.href.split('habitoSeleccionado=');
+      if (parts[1]) habitoDetectado = parts[1].split('&')[0];
+    }
+  }
+
+  const habitoActivo = (['tabaco', 'ansiedadComer', 'procrastinar', 'doomscrolling'].includes(habitoDetectado)
+    ? habitoDetectado
+    : 'tabaco') as 'tabaco' | 'ansiedadComer' | 'procrastinar' | 'doomscrolling';
+>>>>>>> ba0cb8487fb74c7c1d0aa711a43e33124ba9a000:app/(tabs)/[habito].tsx
 
   const simboloCartaMemoria = "❓";
   const emojisSentimientos = [
@@ -171,12 +249,23 @@ export default function Dashboard() {
     { emoji: "🔥", label: "Fuerte" },
   ];
 
+<<<<<<< HEAD:app/(tabs)/dashboard.tsx
   const [modalVisible, setModalVisible] = useState(false); // Modal SOS
   const [modalJournalVisible, setModalJournalVisible] = useState(false); // Modal Diario
 
   const [categoria, setCategoria] = useState<
     "juegos" | "retos" | "frases" | null
   >(null);
+=======
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalJournalVisible, setModalJournalVisible] = useState(false);
+
+
+  const [modalRetosVisible, setModalRetosVisible] = useState(false);
+  const [retosMarcados, setRetosMarcados] = useState<Record<number, boolean>>({});
+
+  const [currentCategoria, setCategoria] = useState<'juegos' | 'retos' | 'frases' | null>(null);
+>>>>>>> ba0cb8487fb74c7c1d0aa711a43e33124ba9a000:app/(tabs)/[habito].tsx
 
   const [sentimientoSeleccionado, setSentimientoSeleccionado] = useState<
     string | null
@@ -201,8 +290,9 @@ export default function Dashboard() {
   const [retoEjecutandose, setRetoEjecutandose] = useState<any | null>(null);
   const [progresoReto, setProgresoReto] = useState(0);
   const [segundos, setSegundos] = useState(0);
-
   const [fraseActual, setFraseActual] = useState({ id: 1, texto: "" });
+
+  const retosDelDia = RETOS_POR_HABITO[habitoActivo] || RETOS_POR_HABITO.default || [];
 
   useEffect(() => {
     let intervalo: any;
@@ -212,8 +302,12 @@ export default function Dashboard() {
     return () => clearInterval(intervalo);
   }, [segundos, retoEjecutandose]);
 
+<<<<<<< HEAD:app/(tabs)/dashboard.tsx
   const moverEmoji = () =>
     setPosicion({ top: Math.random() * 130, left: Math.random() * 170 });
+=======
+  const moverEmoji = () => setPosicion({ top: Math.random() * 130, left: Math.random() * 170 });
+>>>>>>> ba0cb8487fb74c7c1d0aa711a43e33124ba9a000:app/(tabs)/[habito].tsx
 
   const iniciarMemoria = () => {
     const iconos = contenidoRescatePorHabito[habitoActivo].juegos.iconosParejas;
@@ -280,7 +374,14 @@ export default function Dashboard() {
   };
 
   const abrirRetosDiarios = () => {
-    alert("¡Próximamente: Tus retos diarios personalizados!");
+    setModalRetosVisible(true);
+  };
+
+  const toggleRetoIndice = (index: number) => {
+    setRetosMarcados(prev => ({
+      ...prev,
+      [index]: !prev[index]
+    }));
   };
 
   const guardarReflexionCompleta = () => {
@@ -288,6 +389,7 @@ export default function Dashboard() {
       alert("Por favor, selecciona un estado de ánimo antes de guardar.");
       return;
     }
+<<<<<<< HEAD:app/(tabs)/dashboard.tsx
     console.log(
       "REFLEXIÓN DIARIA GUARDADA EN FIREBASE PARA HÁBITO:",
       habitoActivo,
@@ -297,6 +399,8 @@ export default function Dashboard() {
         fecha: new Date().toLocaleDateString(),
       },
     );
+=======
+>>>>>>> ba0cb8487fb74c7c1d0aa711a43e33124ba9a000:app/(tabs)/[habito].tsx
     setDiarioGuardado(true);
     setModalJournalVisible(false);
   };
@@ -330,6 +434,7 @@ export default function Dashboard() {
             <View style={styles.whiteCard}>
               <View style={styles.headerRow}>
                 <Text style={styles.todayTitle}>Progreso</Text>
+<<<<<<< HEAD:app/(tabs)/dashboard.tsx
                 <View
                   style={{
                     flexDirection: "row",
@@ -355,6 +460,11 @@ export default function Dashboard() {
                     />
                   </TouchableOpacity>
                 </View>
+=======
+                <TouchableOpacity style={styles.profileIcon}>
+                  <Ionicons name="notifications-outline" size={20} color="#8E5CF6" />
+                </TouchableOpacity>
+>>>>>>> ba0cb8487fb74c7c1d0aa711a43e33124ba9a000:app/(tabs)/[habito].tsx
               </View>
 
               <View style={styles.calendar}>
@@ -380,10 +490,14 @@ export default function Dashboard() {
               </View>
 
               <View style={styles.illustrationContainer}>
+<<<<<<< HEAD:app/(tabs)/dashboard.tsx
                 <LinearGradient
                   colors={["#8E5CF6", "#C084FC"]}
                   style={styles.blob}
                 >
+=======
+                <LinearGradient colors={['#8E5CF6', '#C084FC']} style={styles.blob}>
+>>>>>>> ba0cb8487fb74c7c1d0aa711a43e33124ba9a000:app/(tabs)/[habito].tsx
                   <Ionicons name="rocket-outline" size={80} color="#FFF" />
                 </LinearGradient>
 
@@ -392,24 +506,39 @@ export default function Dashboard() {
                 </Text>
 
                 <View style={styles.miniBarBg}>
+<<<<<<< HEAD:app/(tabs)/dashboard.tsx
                   <View style={[styles.miniBarFill, { width: "15%" }]} />
+=======
+                  <View style={[styles.miniBarFill, { width: '15%' }]} />
+>>>>>>> ba0cb8487fb74c7c1d0aa711a43e33124ba9a000:app/(tabs)/[habito].tsx
                 </View>
               </View>
 
               <View style={styles.widgetsGrid}>
                 <View style={styles.widget}>
                   <View style={styles.widgetHeader}>
+<<<<<<< HEAD:app/(tabs)/dashboard.tsx
                     <Ionicons name="time" size={18} color="#8E5CF6" />
                     <Text style={styles.widgetTitle}>Tiempo</Text>
                   </View>
                   <Text style={styles.widgetValue}>02d 14h</Text>
+=======
+                    <Ionicons name={contenidoRescatePorHabito[habitoActivo].metricaIcono} size={18} color="#8E5CF6" />
+                    <Text style={styles.widgetTitle}>{contenidoRescatePorHabito[habitoActivo].metricaLabel}</Text>
+                  </View>
+                  <Text style={styles.widgetValue}>{contenidoRescatePorHabito[habitoActivo].metricaValor}</Text>
+>>>>>>> ba0cb8487fb74c7c1d0aa711a43e33124ba9a000:app/(tabs)/[habito].tsx
                 </View>
+
                 <View style={styles.widget}>
                   <View style={styles.widgetHeader}>
                     <Ionicons name="cash-outline" size={18} color="#4ADE80" />
                     <Text style={styles.widgetTitle}>Ahorro</Text>
                   </View>
+<<<<<<< HEAD:app/(tabs)/dashboard.tsx
 
+=======
+>>>>>>> ba0cb8487fb74c7c1d0aa711a43e33124ba9a000:app/(tabs)/[habito].tsx
                   <Text style={styles.widgetValue}>
                     {contenidoRescatePorHabito[habitoActivo].ahorroTexto}
                   </Text>
@@ -506,11 +635,18 @@ export default function Dashboard() {
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <TouchableOpacity
                   style={styles.btnHistory}
+<<<<<<< HEAD:app/(tabs)/dashboard.tsx
                   onPress={() =>
                     alert(
                       `Historial: Abriendo tus reflexiones pasadas de ${contenidoRescatePorHabito[habitoActivo].titulo}`,
                     )
                   }
+=======
+                  onPress={() => {
+                    setModalJournalVisible(false);
+                    router.push('/historial-journal');
+                  }}
+>>>>>>> ba0cb8487fb74c7c1d0aa711a43e33124ba9a000:app/(tabs)/[habito].tsx
                   activeOpacity={0.7}
                 >
                   <Ionicons name="time-outline" size={22} color="#8E5CF6" />
@@ -576,11 +712,74 @@ export default function Dashboard() {
         </View>
       </Modal>
 
+<<<<<<< HEAD:app/(tabs)/dashboard.tsx
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <View style={styles.centrarModal}>
           <View style={styles.modalContenido}>
             {categoria === "frases" ? (
               <View style={styles.contenedorFrases}>
+=======
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalRetosVisible}
+        onRequestClose={() => setModalRetosVisible(false)}
+      >
+        <View style={styles.modalOverlayJournal}>
+          <View style={[styles.modalContentJournal, { height: '75%' }]}>
+            <View style={styles.modalJournalHeader}>
+              <View>
+                <Text style={styles.modalJournalTitle}>Retos de Hoy</Text>
+                <Text style={[styles.modalJournalDate, { color: '#22C55E' }]}>Objetivos de consolidación</Text>
+              </View>
+              <TouchableOpacity onPress={() => setModalRetosVisible(false)}>
+                <Ionicons name="close-circle" size={32} color="#D1D5DB" />
+              </TouchableOpacity>
+            </View>
+
+            <Text style={{ fontSize: 14, color: '#6B7280', marginBottom: 15, fontWeight: '500' }}>
+              Completa las 5 acciones clave diseñadas para debilitar el hábito de: <Text style={{ fontWeight: 'bold', color: '#111827' }}>{habitoActivo.toUpperCase()}</Text>
+            </Text>
+
+            <ScrollView showsVerticalScrollIndicator={false} style={{ marginVertical: 10 }}>
+              {retosDelDia.map((textoReto, index) => {
+                const completado = !!retosMarcados[index];
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={[styles.filaRetoCard, completado && styles.filaRetoCardCompletada]}
+                    onPress={() => toggleRetoIndice(index)}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[styles.textoRetoItem, completado && styles.textoRetoItemCompletado]}>
+                      {textoReto}
+                    </Text>
+                    <View style={[styles.checkboxReto, completado && styles.checkboxRetoChecked]}>
+                      {completado && <Ionicons name="checkmark-sharp" size={14} color="white" />}
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+
+            <TouchableOpacity
+              style={[styles.btnGuardarJournal, { backgroundColor: '#22C55E', marginTop: 10 }]}
+              onPress={() => setModalRetosVisible(false)}
+            >
+              <Text style={styles.btnGuardarJournalTexto}>Listo por hoy</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+
+      <Modal animationType="slide" transparent={true} visible={modalVisible}>
+        <View style={styles.centrarModal}>
+          <View style={styles.modalContenido}>
+            {currentCategoria === 'frases' ? (
+              <View style={styles.gameContainer}>
+>>>>>>> ba0cb8487fb74c7c1d0aa711a43e33124ba9a000:app/(tabs)/[habito].tsx
                 <Text style={styles.modalTitulo}>Inspiración ✨</Text>
                 <LinearGradient
                   colors={["#F472B6", "#DB2777"]}
@@ -657,6 +856,7 @@ export default function Dashboard() {
                 <Text style={styles.modalTitulo}>¡Rápido! ⚡</Text>
                 <View style={styles.areaReflejo}>
                   {puntos < 10 ? (
+<<<<<<< HEAD:app/(tabs)/dashboard.tsx
                     <TouchableOpacity
                       onPress={() => {
                         setPuntos(puntos + 1);
@@ -673,6 +873,10 @@ export default function Dashboard() {
                             .emojiReflejo
                         }
                       </Text>
+=======
+                    <TouchableOpacity onPress={() => { setPuntos(puntos + 1); moverEmoji(); }} style={[styles.emojiReflejo, { top: posicion.top, left: posicion.left }]}>
+                      <Text style={{ fontSize: 40 }}>{contenidoRescatePorHabito[habitoActivo].juegos.emojiReflejo}</Text>
+>>>>>>> ba0cb8487fb74c7c1d0aa711a43e33124ba9a000:app/(tabs)/[habito].tsx
                     </TouchableOpacity>
                   ) : (
                     <Text style={styles.ganasteTexto}>
@@ -752,7 +956,7 @@ export default function Dashboard() {
               </View>
             ) : (
               <>
-                {!categoria ? (
+                {!currentCategoria ? (
                   <>
                     <Text style={styles.modalTitulo}>
                       SOS {contenidoRescatePorHabito[habitoActivo].titulo}
@@ -778,6 +982,7 @@ export default function Dashboard() {
                   </>
                 ) : (
                   <>
+<<<<<<< HEAD:app/(tabs)/dashboard.tsx
                     <Text style={styles.modalTitulo}>
                       {categoria.toUpperCase()}
                     </Text>
@@ -816,6 +1021,16 @@ export default function Dashboard() {
                         </TouchableOpacity>
                       </View>
                     ) : categoria === "retos" ? (
+=======
+                    <Text style={styles.modalTitulo}>{currentCategoria.toUpperCase()}</Text>
+                    {currentCategoria === 'juegos' ? (
+                      <View style={{ width: '100%' }}>
+                        <TouchableOpacity style={styles.opcionCajaJuego} onPress={() => { setJuegoActivo(true); setTablero(Array(9).fill(null)); }}><Text style={styles.opcionTextoJuego}>❌ Tres en Raya</Text></TouchableOpacity>
+                        <TouchableOpacity style={styles.opcionCajaJuego} onPress={iniciarMemoria}><Text style={styles.opcionTextoJuego}>🧠 Memoria</Text></TouchableOpacity>
+                        <TouchableOpacity style={styles.opcionCajaJuego} onPress={() => { setReflejoActivo(true); setPuntos(0); moverEmoji(); }}><Text style={styles.opcionTextoJuego}>⚡ Reflejos</Text></TouchableOpacity>
+                      </View>
+                    ) : currentCategoria === 'retos' ? (
+>>>>>>> ba0cb8487fb74c7c1d0aa711a43e33124ba9a000:app/(tabs)/[habito].tsx
                       contenidoRescatePorHabito[habitoActivo].retos.map((r) => (
                         <TouchableOpacity
                           key={r.id}
@@ -856,6 +1071,7 @@ export default function Dashboard() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scrollContent: { paddingBottom: 40 },
+<<<<<<< HEAD:app/(tabs)/dashboard.tsx
   topNav: { alignItems: "center", marginTop: 10, marginBottom: 15 },
   brandTitle: {
     fontSize: 38,
@@ -1307,3 +1523,134 @@ const styles = StyleSheet.create({
   },
   btnNuevaFraseTexto: { color: "#DB2777", fontWeight: "bold", fontSize: 13 },
 });
+=======
+  topNav: { alignItems: 'center', marginTop: 10, marginBottom: 15 },
+  brandTitle: { fontSize: 38, fontWeight: '900', color: '#5D45DB', letterSpacing: -1 },
+  brandSubtitle: { fontSize: 14, color: '#6B7280', fontWeight: '500' },
+  whiteCard: { backgroundColor: 'rgba(255, 255, 255, 0.9)', marginHorizontal: 12, borderRadius: 45, padding: 22, elevation: 8 },
+  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
+  todayTitle: { fontSize: 28, fontWeight: '800', color: '#1F2937' },
+  profileIcon: { backgroundColor: '#F3F0FF', padding: 10, borderRadius: 18 },
+  calendar: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 25 },
+  dayItem: { width: 40, height: 55, backgroundColor: '#F3F4F6', borderRadius: 15, justifyContent: 'center', alignItems: 'center' },
+  dayItemActive: { backgroundColor: '#5D45DB' },
+  dayName: { fontSize: 14, fontWeight: '700', color: '#9CA3AF' },
+  dayTextActive: { color: '#FFF' },
+  activeDot: { width: 4, height: 4, backgroundColor: '#FFF', borderRadius: 2, marginTop: 4 },
+  illustrationContainer: { alignItems: 'center', marginBottom: 30 },
+  blob: { width: 110, height: 110, borderRadius: 55, justifyContent: 'center', alignItems: 'center', marginBottom: 15 },
+  mainProgressText: { fontSize: 18, fontWeight: '900', color: '#111827', textAlign: 'center' },
+  miniBarBg: { width: '60%', height: 8, backgroundColor: '#E5E7EB', borderRadius: 10, marginTop: 15, overflow: 'hidden' },
+  miniBarFill: { height: '100%', backgroundColor: '#8E5CF6', borderRadius: 10 },
+  widgetsGrid: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
+  widget: { backgroundColor: '#FFF', width: '48%', borderRadius: 25, padding: 16, borderWidth: 1, borderColor: '#F3F4F6' },
+  widgetHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
+  widgetTitle: { fontSize: 12, fontWeight: '700', color: '#6B7280', marginLeft: 6 },
+  widgetValue: { fontSize: 18, fontWeight: '800', color: '#111827' },
+  journalSection: { backgroundColor: '#F9FAFB', borderRadius: 28, padding: 18, marginBottom: 20, borderWidth: 1, borderColor: '#F3F4F6' },
+  journalSectionCompleted: { backgroundColor: '#ECFDF5', borderColor: '#A7F3D0' },
+  journalHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  journalTitle: { fontSize: 18, fontWeight: '800', color: '#1F2937' },
+  notaContainerFalsa: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'white', borderRadius: 16, paddingHorizontal: 15, paddingVertical: 12, borderWidth: 1, borderColor: '#E5E7EB' },
+  placeholderFalso: { color: '#9CA3AF', fontSize: 14, fontWeight: '500', flex: 1 },
+  circleCheckFalso: { backgroundColor: '#D1D5DB', width: 22, height: 22, borderRadius: 11, justifyContent: 'center', alignItems: 'center', marginLeft: 10 },
+  circleCheckVerde: { backgroundColor: '#10B981' },
+  horizontalGrid: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
+  activityButton: { width: '48%' },
+  activityGradient: { flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 15, borderRadius: 25, borderWidth: 1, borderColor: '#BBF7D0', height: 80 },
+  activityText: { color: '#16A34A', fontWeight: '800', fontSize: 12, marginTop: 8, textAlign: 'center' },
+  sosButton: { width: '48%' },
+  sosGradient: { flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 15, borderRadius: 25, height: 80 },
+  sosText: { color: '#EF4444', fontWeight: '800', fontSize: 12, marginTop: 8, textAlign: 'center' },
+  modalOverlayJournal: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
+  modalContentJournal: { backgroundColor: 'white', borderTopLeftRadius: 40, borderTopRightRadius: 40, padding: 25, height: '80%' },
+  modalJournalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 },
+  modalJournalTitle: { fontSize: 24, fontWeight: '900', color: '#1F2937' },
+  modalJournalDate: { color: '#8E5CF6', fontWeight: '700', fontSize: 14, marginTop: 2 },
+  btnHistory: { backgroundColor: '#F3F0FF', padding: 10, borderRadius: 15, marginRight: 10 },
+  moodSectionInside: { backgroundColor: '#F9FAFB', borderRadius: 22, padding: 16, marginBottom: 20 },
+  moodTitleInside: { fontSize: 15, fontWeight: '800', color: '#374151', marginBottom: 12 },
+  emojiContainerInside: { flexDirection: 'row', justifyContent: 'space-between' },
+  emojiButtonInside: { paddingVertical: 10, paddingHorizontal: 4, borderRadius: 16, backgroundColor: 'white', width: '18%', alignItems: 'center', borderWidth: 1, borderColor: '#E5E7EB' },
+  emojiButtonActiveInside: { backgroundColor: '#8E5CF6', borderColor: '#5D45DB' },
+  emojiTextInside: { fontSize: 22, marginBottom: 2 },
+  emojiLabelInside: { fontSize: 10, color: '#6B7280', fontWeight: '600' },
+  inputLabelInside: { fontSize: 15, fontWeight: '800', color: '#374151', marginBottom: 10 },
+  modalJournalInput: { flex: 1, backgroundColor: '#F9FAFB', borderRadius: 20, padding: 16, fontSize: 15, color: '#1F2937', borderWidth: 1, borderColor: '#E5E7EB', marginBottom: 20 },
+  btnGuardarJournal: { backgroundColor: '#8E5CF6', padding: 16, borderRadius: 20, alignItems: 'center', marginBottom: 10 },
+  btnGuardarJournalTexto: { color: 'white', fontWeight: '800', fontSize: 16 },
+  centrarModal: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' },
+  modalContenido: { width: '85%', backgroundColor: 'white', borderRadius: 35, padding: 25, alignItems: 'center' },
+  modalTitulo: { fontSize: 18, fontWeight: '900', color: '#1F2937', marginBottom: 15, textAlign: 'center' },
+  botonMenu: { width: '100%', padding: 18, borderRadius: 20, marginBottom: 12, alignItems: 'center' },
+  textoBoton: { color: 'white', fontWeight: '800', fontSize: 16 },
+  opcionCaja: { width: '100%', backgroundColor: '#F3F4F6', padding: 15, borderRadius: 15, marginBottom: 10 },
+  opcionTexto: { fontSize: 15, color: '#4B5563', fontWeight: '600', textAlign: 'center' },
+  botonVolver: { marginTop: 15, padding: 10 },
+  textoVolver: { color: '#8E5CF6', fontWeight: 'bold' },
+  botonCerrarX: { position: 'absolute', top: -10, right: -10, backgroundColor: 'white', borderRadius: 20 },
+  gameContainer: { alignItems: 'center', width: '100%' },
+  board: { width: 222, height: 222, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', alignContent: 'center', backgroundColor: '#F3F4F6', padding: 6, borderRadius: 20 },
+  square: { width: 66, height: 66, backgroundColor: 'white', margin: 2, justifyContent: 'center', alignItems: 'center', borderRadius: 12, shadowColor: "#000", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 },
+  squareText: { fontSize: 32, fontWeight: '900' },
+  gridMemoria: { width: '100%', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginTop: 10 },
+  carta: { width: 65, height: 65, backgroundColor: '#8E5CF6', margin: 5, borderRadius: 15, justifyContent: 'center', alignItems: 'center' },
+  cartaRevelada: { backgroundColor: '#F3F4F6' },
+  emojiCarta: { fontSize: 22 },
+  opcionCajaJuego: { width: '100%', backgroundColor: '#F3F0FF', padding: 15, borderRadius: 15, marginBottom: 10, borderWidth: 1, borderColor: '#8E5CF6' },
+  opcionTextoJuego: { color: '#8E5CF6', fontWeight: 'bold', textAlign: 'center' },
+  areaReflejo: { width: '100%', height: 180, backgroundColor: '#F9FAFB', borderRadius: 20, position: 'relative', overflow: 'hidden' },
+  emojiReflejo: { position: 'absolute' },
+  ganasteTexto: { fontSize: 18, fontWeight: 'bold', color: '#4ADE80', marginVertical: 10 },
+  circuloTiempo: { width: 100, height: 100, borderRadius: 50, borderWidth: 6, borderColor: '#4ADE80', justifyContent: 'center', alignItems: 'center', marginVertical: 20 },
+  numeroTiempo: { fontSize: 24, fontWeight: '900', color: '#111827' },
+  contenedorReps: { alignItems: 'center', marginVertical: 15 },
+  btnContar: { backgroundColor: '#4ADE80', width: 60, height: 60, borderRadius: 30, justifyContent: 'center', alignItems: 'center', marginTop: 10 },
+  tarjetaFrase: { width: '100%', padding: 20, borderRadius: 25, marginVertical: 15 },
+  textoFrasePrincipal: { color: 'white', fontSize: 18, fontWeight: '700', textAlign: 'center', fontStyle: 'italic', marginVertical: 10 },
+  btnNuevaFrase: { backgroundColor: '#FFF', borderWidth: 1, borderColor: '#F472B6', padding: 12, borderRadius: 15, width: '100%', alignItems: 'center' },
+  btnNuevaFraseTexto: { color: '#DB2777', fontWeight: '700', fontSize: 14 },
+
+
+  filaRetoCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    padding: 16,
+    borderRadius: 20,
+    marginBottom: 10
+  },
+  filaRetoCardCompletada: {
+    backgroundColor: '#DCFCE7',
+    borderColor: '#BBF7D0'
+  },
+  textoRetoItem: {
+    flex: 1,
+    fontSize: 14,
+    color: '#374151',
+    fontWeight: '600',
+    paddingRight: 10
+  },
+  textoRetoItemCompletado: {
+    color: '#16A34A',
+    textDecorationLine: 'line-through'
+  },
+  checkboxReto: {
+    width: 24,
+    height: 24,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#D1D5DB',
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  checkboxRetoChecked: {
+    backgroundColor: '#22C55E',
+    borderColor: '#22C55E'
+  }
+});
+>>>>>>> ba0cb8487fb74c7c1d0aa711a43e33124ba9a000:app/(tabs)/[habito].tsx
