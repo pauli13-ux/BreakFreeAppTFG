@@ -18,7 +18,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 
-// Importamos la lógica de validación
+
 import { getFormError } from "./utils/validations";
 
 const { width } = Dimensions.get("window");
@@ -35,7 +35,7 @@ export default function CuteLogin() {
     transform: [{ translateY: withSpring(mascotHeight.value * -10) }],
   }));
 
-  // Función de Login con validación
+
   const handleLogin = () => {
     setErrorMessage(null);
 
@@ -49,7 +49,8 @@ export default function CuteLogin() {
     mascotHeight.value = 5;
     setTimeout(() => {
       mascotHeight.value = 0;
-      router.replace("/selector_habito");
+
+      router.replace("/onboarding");
     }, 500);
   };
 
@@ -59,7 +60,7 @@ export default function CuteLogin() {
       style={styles.container}
     >
       <View style={styles.inner}>
-        {/* SECCIÓN DE LA MASCOTA */}
+
         <Animated.View style={[styles.mascotContainer, animatedMascotStyle]}>
           <LottieView
             autoPlay
@@ -102,7 +103,7 @@ export default function CuteLogin() {
             }}
           />
 
-          {/* MENSAJE DE ERROR VISUAL */}
+
           {errorMessage && (
             <View style={styles.errorContainer}>
               <Text style={styles.errorText}>{errorMessage}</Text>
@@ -111,7 +112,7 @@ export default function CuteLogin() {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={handleLogin} // <--- AQUÍ conectamos la función
+            onPress={handleLogin}
           >
             <Text style={styles.buttonText}>ENTRAR</Text>
           </TouchableOpacity>
@@ -174,7 +175,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#E9D8FD",
   },
-  // ESTILOS NUEVOS PARA EL ERROR
   errorContainer: {
     backgroundColor: "#FED7D7",
     padding: 10,

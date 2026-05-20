@@ -57,7 +57,7 @@ export default function TiempoObjetivo() {
                     <TouchableOpacity
                         style={[styles.button, !tiempoSeleccionado && styles.btnDeshabilitado]}
                         disabled={!tiempoSeleccionado}
-                        // Enlaza con tu info-habito original
+
                         onPress={() => router.replace({ pathname: "/info-habito", params: { id: id } })}
                     >
                         <Text style={styles.buttonText}>Ver mi Plan de Acción</Text>
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
         paddingVertical: 30,
     },
     innerContainer: {
-        paddingHorizontal: 24, // Ajustado para centrar perfectamente en cualquier ancho de pantalla
+        paddingHorizontal: 24,
         width: '100%',
         alignItems: 'center'
     },

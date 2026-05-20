@@ -19,7 +19,7 @@ export default function SettingsScreen() {
   const router = useRouter();
   const [image, setImage] = useState<string | null>(null);
 
-  // Estos estados deben inicializarse con los datos que vienen del Login
+
   const [usuario, setUsuario] = useState("Jeni");
   const [contacto, setContacto] = useState("jeyfjwa23@gmail.com");
   const [clave, setClave] = useState("********");
@@ -36,11 +36,10 @@ export default function SettingsScreen() {
     }
   };
 
-  // 🎯 ESTA ES LA FUNCIÓN QUE CONECTA CON LA BASE DE DATOS
+
   const handleGuardarCambios = async () => {
     try {
-      // Aquí es donde haréis el fetch a vuestro servidor/api
-      // const response = await fetch('URL_DE_VUESTRA_API/updateUser', { ... })
+
 
       console.log("Enviando a BD:", { usuario, contacto, image });
 
@@ -61,7 +60,7 @@ export default function SettingsScreen() {
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
         >
-          {/* HEADER RECOGIDO */}
+
           <View style={styles.header}>
             <TouchableOpacity onPress={() => router.back()}>
               <Ionicons name="chevron-back" size={24} color="#553C9A" />
@@ -70,7 +69,7 @@ export default function SettingsScreen() {
             <View style={{ width: 24 }} />
           </View>
 
-          {/* FOTO PRO RECALIBRADA */}
+
           <View style={styles.profileSection}>
             <View style={styles.imageWrapper}>
               {image ? (
@@ -86,7 +85,7 @@ export default function SettingsScreen() {
             </View>
           </View>
 
-          {/* FORMULARIO COMPACTO */}
+
           <View style={styles.card}>
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Usuario</Text>
@@ -123,7 +122,7 @@ export default function SettingsScreen() {
             </View>
           </View>
 
-          {/* BOTÓN MÁS PEQUEÑO Y RECOGIDO */}
+
           <TouchableOpacity
             style={styles.saveBtn}
             onPress={handleGuardarCambios}

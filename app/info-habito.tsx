@@ -4,7 +4,8 @@ import React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const habitContent: any = {
-    ansiedad: {
+
+    ansiedadComer: {
         title: "Ansiedad por comer",
         subtitle: "Aprende a diferenciar el hambre física del hambre emocional.",
         icon: "fast-food",
@@ -15,7 +16,8 @@ const habitContent: any = {
             "Evita distracciones como el móvil mientras comes."
         ]
     },
-    fumar: {
+
+    tabaco: {
         title: "Dejar de fumar",
         subtitle: "Recupera tu salud y ahorra dinero cada día.",
         icon: 'ban',
@@ -54,13 +56,8 @@ export default function InfoHabito() {
     const { id } = useLocalSearchParams();
     const router = useRouter();
 
-    const content = habitContent[id as string] || habitContent.ansiedad;
 
-    // Mapeo del ID para que coincida exactamente con vuestros archivos de (tabs)/[habito].tsx
-    let idDashboard = 'tabaco';
-    if (id === 'ansiedad') idDashboard = 'ansiedadComer';
-    if (id === 'procrastinar') idDashboard = 'procrastinar';
-    if (id === 'doomscrolling') idDashboard = 'doomscrolling';
+    const content = habitContent[id as string] || habitContent.ansiedadComer;
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -91,8 +88,8 @@ export default function InfoHabito() {
                     <TouchableOpacity
                         style={[styles.startButton, { backgroundColor: content.color }]}
                         onPress={() => {
-                            // CORRECCIÓN: Apuntamos directamente a la ruta dinámica saltando el grupo (tabs)
-                            router.replace(`/${idDashboard}`);
+
+                            router.replace(`/${id}`);
                         }}
                     >
                         <Text style={styles.startButtonText}>¡Empezar ahora!</Text>

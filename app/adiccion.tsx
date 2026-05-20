@@ -75,11 +75,11 @@ const styles = StyleSheet.create({
     },
     scrollContainer: {
         flexGrow: 1,
-        justifyContent: 'center', // Al usar ScrollView, flexGrow + center centra el contenido verticalmente si sobra espacio
+        justifyContent: 'center',
         paddingVertical: 30,
     },
     innerContainer: {
-        paddingHorizontal: 24, // Margen de seguridad lateral para que respire
+        paddingHorizontal: 24,
         width: '100%',
         alignItems: 'center'
     },

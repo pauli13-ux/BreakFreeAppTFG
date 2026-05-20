@@ -8,7 +8,7 @@ const { width } = Dimensions.get('window');
 export default function SelectorHabito() {
   const router = useRouter();
 
-  // Mapeamos los IDs idénticos a tu Dashboard para que coincidan las variables de la BBDD
+
   const habitos = [
     {
       id: 'tabaco',
@@ -41,7 +41,7 @@ export default function SelectorHabito() {
   ];
 
   const seleccionarHabito = (habitoId: string) => {
-    // Redirige primero a la pantalla de adicción pasando el ID por parámetro de URL
+
     router.push({
       pathname: '/adiccion',
       params: { id: habitoId }

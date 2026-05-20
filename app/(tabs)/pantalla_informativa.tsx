@@ -7,7 +7,7 @@ export default function PantallaInformativa() {
     const router = useRouter();
     const { id } = useLocalSearchParams();
 
-    // Textos e información personalizada según el hábito seleccionado
+
     const infoHabito: Record<string, { info: string; tip: string; icono: string; color: string }> = {
         tabaco: {
             info: "A partir de las primeras 8 horas sin fumar, los niveles de oxígeno en tu sangre volverán a la normalidad y tus pulmones empezarán a limpiarse.",
@@ -49,20 +49,20 @@ export default function PantallaInformativa() {
                     <Text style={styles.titulo}>Tu plan está listo</Text>
                     <Text style={styles.subtitulo}>Esto es lo que necesitas saber antes de empezar tu primer día:</Text>
 
-                    {/* Tarjeta de Información Científica/Médica */}
+
                     <View style={styles.tarjetaInfo}>
                         <Text style={styles.tagTarjeta}>¿SABÍAS QUÉ?</Text>
                         <Text style={styles.textoTarjeta}>{datosActuales.info}</Text>
                     </View>
 
-                    {/* Tarjeta de Consejo Práctico */}
+
                     <View style={[styles.tarjetaInfo, styles.tarjetaTip]}>
                         <Text style={[styles.tagTarjeta, { color: '#805AD5' }]}>CONSEJO CLAVE</Text>
                         <Text style={styles.textoTarjeta}>{datosActuales.tip}</Text>
                     </View>
                 </View>
 
-                {/* Botón Final: Te manda al Dashboard dinámico que creamos antes */}
+
                 <TouchableOpacity
                     style={styles.button}
                     onPress={() => router.replace(`/[habito].tsx/${id}`)} // Cambia '/dashboard/' por tu ruta real hacia [habito].tsx

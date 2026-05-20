@@ -51,7 +51,7 @@ export default function JournalScreen() {
             
             <View style={styles.pullBar} />
 
-           
+          
             <View style={styles.header}>
               <TouchableOpacity onPress={closeJournal} style={styles.closeBtn}>
                 <Ionicons name="close" size={24} color="#8E5CF6" />

@@ -183,9 +183,15 @@ export default function RegisterScreen() {
                             <TouchableOpacity
                                 style={styles.modalButton}
                                 onPress={() => {
+                                    console.log("1. Botón pulsado, cerrando modal...");
                                     setModalVisible(false);
-                                    // CORRECCIÓN: Te manda directo al onboarding nada más registrarte
-                                    router.push('/onboarding');
+
+                                    
+                                    setTimeout(() => {
+                                        console.log("2. Forzando salto a onboarding...");
+                            
+                                        router.push('/onboarding');
+                                    }, 500);
                                 }}
                             >
                                 <Text style={styles.buttonText}>Empezar</Text>

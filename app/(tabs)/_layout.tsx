@@ -6,9 +6,9 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        // Desactivamos el header global para que no moleste ni duplique botones
+
         headerShown: false,
-        // Ocultamos la barra de pestañas de abajo si así lo teníais configurado
+
         tabBarStyle: { display: "none" },
       }}
     >
@@ -20,7 +20,7 @@ export default function TabLayout() {
   );
 }
 
-// Dejamos los estilos vacíos por si el router los busca, pero ya no rompen nada
+
 const styles = StyleSheet.create({
   topHeaderCircles: {
     flexDirection: "row",
