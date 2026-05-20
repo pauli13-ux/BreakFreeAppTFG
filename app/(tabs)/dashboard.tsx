@@ -315,6 +315,8 @@ export default function Dashboard() {
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
+            {" "}
+            {/* aqui hace que al pinchar se abra el onboarding */}
             <View style={styles.topNav}>
               <TouchableOpacity
                 onPress={() => router.push("/onboarding")}
@@ -326,7 +328,7 @@ export default function Dashboard() {
                 Tu camino hacia la libertad
               </Text>
             </View>
-
+            {/* la campanita a la izquierda*/}
             <View style={styles.whiteCard}>
               <View style={styles.headerRow}>
                 <Text style={styles.todayTitle}>Progreso</Text>
