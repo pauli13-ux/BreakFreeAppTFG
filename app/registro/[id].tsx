@@ -13,15 +13,16 @@ export default function RegistroCuestionario() {
 
     console.log("CUESTIONARIO RECIBE ID:", id);
 
+    // CORRECCIÓN: Claves sincronizadas con los IDs de tu selector de hábitos
     const allQuestions: Record<string, { title: string; options: { id: string; label: string }[] }[]> = {
-        fumar: [
+        tabaco: [
             { title: "¿Cuántos cigarrillos fumas al día?", options: [{ id: '1', label: 'Menos de 5' }, { id: '2', label: 'Entre 5 y 10' }, { id: '3', label: 'Entre 10 y 20' }, { id: '4', label: 'Más de 20' }] },
             { title: "¿Cuánto tiempo pasa desde que despiertas hasta el primero?", options: [{ id: '1', label: 'Menos de 5 min' }, { id: '2', label: '6 a 30 min' }, { id: '3', label: '31 a 60 min' }, { id: '4', label: 'Más de una hora' }] },
             { title: "¿En qué situaciones sientes más ganas de fumar?", options: [{ id: '1', label: 'Al tomar café' }, { id: '2', label: 'Después de comer' }, { id: '3', label: 'De fiesta/Social' }, { id: '4', label: 'Bajo estrés' }] },
             { title: "¿Cuál es tu principal motivo para dejarlo?", options: [{ id: '1', label: 'Salud y pulmones' }, { id: '2', label: 'Ahorro de dinero' }, { id: '3', label: 'Presión familiar' }, { id: '4', label: 'Estética y olor' }] },
             { title: "¿Cuánto te cuesta tu cajetilla habitual?", options: [{ id: '1', label: 'Menos de 5€' }, { id: '2', label: 'Entre 5€ y 6€' }, { id: '3', label: 'Más de 6€' }, { id: '4', label: 'Fumo tabaco de liar' }] }
         ],
-        ansiedad: [
+        ansiedadComer: [
             { title: "¿Cómo describirías tu hambre ahora mismo?", options: [{ id: '1', label: 'Repentina y urgente' }, { id: '2', label: 'Poco a poco, puedo esperar' }, { id: '3', label: 'Ganas de algo muy dulce' }, { id: '4', label: 'Vacío en el pecho/estómago' }] },
             { title: "¿Qué emoción sueles sentir antes de comer así?", options: [{ id: '1', label: 'Estrés o agobio' }, { id: '2', label: 'Aburrimiento' }, { id: '3', label: 'Tristeza o soledad' }, { id: '4', label: 'Cansancio extremo' }] },
             { title: "¿Sueles comer con distracciones (móvil/TV)?", options: [{ id: '1', label: 'Siempre' }, { id: '2', label: 'A veces' }, { id: '3', label: 'Rara vez' }, { id: '4', label: 'Nunca' }] },
@@ -67,9 +68,9 @@ export default function RegistroCuestionario() {
             setCurrentStepIndex(currentStepIndex + 1);
             setSelectedOption(null);
         } else {
-
+            // ADAPTACIÓN DEL FLUJO: Redirige a la pantalla de tiempo objetivo pasando el id del hábito
             router.replace({
-                pathname: "/info-habito",
+                pathname: "/tiempo_objetivo",
                 params: { id: id }
             });
         }
@@ -116,7 +117,7 @@ export default function RegistroCuestionario() {
                     onPress={handleNext}
                 >
                     <Text style={styles.mainButtonText}>
-                        {currentStepIndex === totalSteps - 1 ? "Finalizar" : "Continuar"}
+                        {currentStepIndex === totalSteps - 1 ? "Continuar" : "Continuar"}
                     </Text>
                 </TouchableOpacity>
             </View>

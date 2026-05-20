@@ -1,6 +1,7 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import LottieView from 'lottie-react-native';
 import React, { useState } from 'react';
-import { getFormError } from './utils/validations';
 import {
     Dimensions,
     KeyboardAvoidingView,
@@ -13,16 +14,12 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-
-
-import { Ionicons } from '@expo/vector-icons';
-import LottieView from 'lottie-react-native';
-
 import Animated, {
     useAnimatedStyle,
     useSharedValue,
     withSpring
 } from 'react-native-reanimated';
+import { getFormError } from './utils/validations';
 
 const { width } = Dimensions.get('window');
 
@@ -33,7 +30,6 @@ export default function RegisterScreen() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [modalVisible, setModalVisible] = useState(false);
-
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -72,7 +68,6 @@ export default function RegisterScreen() {
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={styles.inner}>
 
-                    
                     <Animated.View style={[styles.mascotContainer, animatedMascotStyle]}>
                         <LottieView
                             autoPlay
@@ -86,7 +81,7 @@ export default function RegisterScreen() {
                     <Text style={styles.subtitle}>Crea tu cuenta para empezar a mejorar</Text>
 
                     <View style={styles.form}>
-                    
+
                         <TextInput
                             placeholder="¿Cómo te llamas?"
                             style={styles.input}
@@ -96,7 +91,6 @@ export default function RegisterScreen() {
                             onBlur={() => { mascotHeight.value = 0; }}
                         />
 
-                    
                         <TextInput
                             placeholder="Tu email"
                             style={styles.input}
@@ -129,7 +123,6 @@ export default function RegisterScreen() {
                             </TouchableOpacity>
                         </View>
 
-                    
                         <View style={styles.passwordContainer}>
                             <TextInput
                                 placeholder="Repite tu contraseña"
@@ -191,7 +184,8 @@ export default function RegisterScreen() {
                                 style={styles.modalButton}
                                 onPress={() => {
                                     setModalVisible(false);
-                                    router.push('/');
+                                    // CORRECCIÓN: Te manda directo al onboarding nada más registrarte
+                                    router.push('/onboarding');
                                 }}
                             >
                                 <Text style={styles.buttonText}>Empezar</Text>
@@ -260,7 +254,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#E9D8FD',
     },
-    // Nuevos estilos para los inputs con icono
     passwordContainer: {
         flexDirection: 'row',
         alignItems: 'center',

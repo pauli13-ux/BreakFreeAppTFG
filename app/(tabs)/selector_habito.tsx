@@ -3,21 +3,19 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { Dimensions, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-
 const { width } = Dimensions.get('window');
 
 export default function SelectorHabito() {
   const router = useRouter();
 
-
+  // Mapeamos los IDs idénticos a tu Dashboard para que coincidan las variables de la BBDD
   const habitos = [
     {
-      id: 'fumar',
+      id: 'tabaco',
       title: 'Dejar de Fumar',
       subtitle: 'Libera tus pulmones',
       icon: 'logo-no-smoking',
       color: '#FF8A65',
-      route: '/registro/fumar'
     },
     {
       id: 'procrastinar',
@@ -25,15 +23,13 @@ export default function SelectorHabito() {
       subtitle: 'Gestiona tu tiempo',
       icon: 'hourglass-outline',
       color: '#9575CD',
-      route: '/registro/procrastinar'
     },
     {
-      id: 'ansiedad',
+      id: 'ansiedadComer',
       title: 'Ansiedad por Comer',
       subtitle: 'Alimentación consciente',
       icon: 'fast-food-outline',
       color: '#FFD54F',
-      route: '/registro/ansiedad'
     },
     {
       id: 'doomscrolling',
@@ -41,9 +37,16 @@ export default function SelectorHabito() {
       subtitle: 'Controla tu tiempo en redes',
       icon: 'logo-instagram',
       color: '#FF6B6B',
-      route: '/registro/doomscrolling'
-    }
+    },
   ];
+
+  const seleccionarHabito = (habitoId: string) => {
+    // Redirige primero a la pantalla de adicción pasando el ID por parámetro de URL
+    router.push({
+      pathname: '/adiccion',
+      params: { id: habitoId }
+    });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -54,13 +57,12 @@ export default function SelectorHabito() {
           <Text style={styles.subtitle}>¿En qué hábito quieres enfocarte primero para mejorar tu vida?</Text>
         </View>
 
-
         <View style={styles.grid}>
           {habitos.map((habito) => (
             <TouchableOpacity
               key={habito.id}
               style={[styles.card, { borderBottomColor: habito.color, borderBottomWidth: 4 }]}
-              onPress={() => router.push(`/registro/${habito.id}`)}
+              onPress={() => seleccionarHabito(habito.id)}
               activeOpacity={0.7}
             >
               <View style={[styles.iconCircle, { backgroundColor: habito.color + '20' }]}>
@@ -115,7 +117,6 @@ const styles = StyleSheet.create({
     padding: 20,
     marginBottom: 20,
     alignItems: 'center',
-
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
