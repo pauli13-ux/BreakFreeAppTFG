@@ -1,8 +1,7 @@
-package main.java.com.example.ApiRest.journal.model;
+package com.example.ApiRest.journal.model; // 1. Removed 'main.java.' and used ApiRest
 
 import java.time.LocalDate;
-
-import com.example.project.user.model.User;
+import com.example.ApiRest.user.model.User; // 2. Fixed import to match ApiRest package
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -14,12 +13,12 @@ public class Journal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDate fecha; // Maps to your handwritten 'fecha' attribute
+    private LocalDate fecha; 
     
-    @Column(columnDefinition = "TEXT") // Allows long-form writing instead of a short string
+    @Column(columnDefinition = "TEXT") 
     private String entry;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false) // Many journal entries belong to 1 User
+    @JoinColumn(name = "user_id", nullable = false) 
     private User user;
 }
