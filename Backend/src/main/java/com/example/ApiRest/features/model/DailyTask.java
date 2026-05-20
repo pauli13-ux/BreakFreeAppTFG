@@ -1,6 +1,6 @@
-package main.java.com.example.ApiRest.features.model;
+package com.example.ApiRest.features.model;
 
-import com.example.project.user.model.User;
+import com.example.ApiRest.user.model.User;
 
 import jakarta.persistence.*;
 import lombok.Data;
