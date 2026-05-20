@@ -107,7 +107,6 @@ export default function Dashboard() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalJournalVisible, setModalJournalVisible] = useState(false);
 
-
   const [modalRetosVisible, setModalRetosVisible] = useState(false);
   const [retosMarcados, setRetosMarcados] = useState<Record<number, boolean>>({});
 
@@ -153,6 +152,7 @@ export default function Dashboard() {
       .map((emoji, index) => ({
         id: index,
         emoji,
+        revealed: true,
         revelada: true,
         resuelta: false
       }));
@@ -253,24 +253,77 @@ export default function Dashboard() {
                 </View>
               </View>
 
-              <View style={styles.widgetsGrid}>
-                <View style={styles.widget}>
-                  <View style={styles.widgetHeader}>
-                    <Ionicons name={contenidoRescatePorHabito[habitoActivo].metricaIcono} size={18} color="#8E5CF6" />
-                    <Text style={styles.widgetTitle}>{contenidoRescatePorHabito[habitoActivo].metricaLabel}</Text>
-                  </View>
-                  <Text style={styles.widgetValue}>{contenidoRescatePorHabito[habitoActivo].metricaValor}</Text>
-                </View>
 
-                <View style={styles.widget}>
-                  <View style={styles.widgetHeader}>
-                    <Ionicons name="cash-outline" size={18} color="#4ADE80" />
-                    <Text style={styles.widgetTitle}>Ahorro</Text>
+              <View style={styles.listaModulosHorizontales}>
+
+
+                {habitoActivo === 'ansiedadComer' && (
+                  <View style={styles.tarjetaFilaHorizontal}>
+                    <LinearGradient colors={['#A8FF78', '#78FFD6']} style={styles.bloqueDatoVerde}>
+                      <Text style={styles.textoDatoVerde}>
+                        {contenidoRescatePorHabito[habitoActivo].metricaValor}
+                      </Text>
+                    </LinearGradient>
+                    <View style={styles.bloqueMensajeDerecho}>
+                      <Text style={styles.tituloMetricaFila}>Nº Días</Text>
+                      <Text style={styles.textoMensajeFila}>
+                        ¡Buen trabajo! Cada día libre de ansiedad es un paso hacia una vida más saludable.
+                      </Text>
+                    </View>
                   </View>
-                  <Text style={styles.widgetValue}>
-                    {contenidoRescatePorHabito[habitoActivo].ahorroTexto}
-                  </Text>
-                </View>
+                )}
+
+
+                {habitoActivo === 'tabaco' && (
+                  <View style={styles.tarjetaFilaHorizontal}>
+                    <LinearGradient colors={['#A8FF78', '#78FFD6']} style={styles.bloqueDatoVerde}>
+                      <Text style={styles.textoDatoVerde}>
+                        {contenidoRescatePorHabito[habitoActivo].ahorroTexto}
+                      </Text>
+                    </LinearGradient>
+                    <View style={styles.bloqueMensajeDerecho}>
+                      <Text style={styles.tituloMetricaFila}>Dinero Ahorrado</Text>
+                      <Text style={styles.textoMensajeFila}>
+                        ¡Suma y sigue! Estás protegiendo tu salud y tu bolsillo al mismo tiempo.
+                      </Text>
+                    </View>
+                  </View>
+                )}
+
+
+                {habitoActivo === 'procrastinar' && (
+                  <View style={styles.tarjetaFilaHorizontal}>
+                    <LinearGradient colors={['#A8FF78', '#78FFD6']} style={styles.bloqueDatoVerde}>
+                      <Text style={styles.textoDatoVerde}>
+                        {contenidoRescatePorHabito[habitoActivo].metricaValor}
+                      </Text>
+                    </LinearGradient>
+                    <View style={styles.bloqueMensajeDerecho}>
+                      <Text style={styles.tituloMetricaFila}>Tiempo no perdido</Text>
+                      <Text style={styles.textoMensajeFila}>
+                        ¡Excelente! Estás tomando el control de tu tiempo para avanzar en tus proyectos.
+                      </Text>
+                    </View>
+                  </View>
+                )}
+
+
+                {habitoActivo === 'doomscrolling' && (
+                  <View style={styles.tarjetaFilaHorizontal}>
+                    <LinearGradient colors={['#A8FF78', '#78FFD6']} style={styles.bloqueDatoVerde}>
+                      <Text style={styles.textoDatoVerde}>
+                        {contenidoRescatePorHabito[habitoActivo].metricaValor}
+                      </Text>
+                    </LinearGradient>
+                    <View style={styles.bloqueMensajeDerecho}>
+                      <Text style={styles.tituloMetricaFila}>Horas Ganadas</Text>
+                      <Text style={styles.textoMensajeFila}>
+                        ¡Increíble! Menos pantalla significa más tiempo real para lo que de verdad importa.
+                      </Text>
+                    </View>
+                  </View>
+                )}
+
               </View>
 
               <TouchableOpacity
@@ -583,11 +636,58 @@ const styles = StyleSheet.create({
   mainProgressText: { fontSize: 18, fontWeight: '900', color: '#111827', textAlign: 'center' },
   miniBarBg: { width: '60%', height: 8, backgroundColor: '#E5E7EB', borderRadius: 10, marginTop: 15, overflow: 'hidden' },
   miniBarFill: { height: '100%', backgroundColor: '#8E5CF6', borderRadius: 10 },
-  widgetsGrid: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
-  widget: { backgroundColor: '#FFF', width: '48%', borderRadius: 25, padding: 16, borderWidth: 1, borderColor: '#F3F4F6' },
-  widgetHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
-  widgetTitle: { fontSize: 12, fontWeight: '700', color: '#6B7280', marginLeft: 6 },
-  widgetValue: { fontSize: 18, fontWeight: '800', color: '#111827' },
+
+  listaModulosHorizontales: {
+    flexDirection: 'column',
+    gap: 14,
+    marginBottom: 20,
+  },
+  tarjetaFilaHorizontal: {
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 22,
+    height: 85,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  bloqueDatoVerde: {
+    width: '28%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textoDatoVerde: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: '#111827',
+    textAlign: 'center',
+  },
+  bloqueMensajeDerecho: {
+    width: '72%',
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+  },
+  tituloMetricaFila: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#8E5CF6',
+    textTransform: 'uppercase',
+    marginBottom: 2,
+    letterSpacing: 0.5,
+  },
+  textoMensajeFila: {
+    fontSize: 12,
+    color: '#4B5563',
+    fontWeight: '600',
+    lineHeight: 16,
+  },
+
   journalSection: { backgroundColor: '#F9FAFB', borderRadius: 28, padding: 18, marginBottom: 20, borderWidth: 1, borderColor: '#F3F4F6' },
   journalSectionCompleted: { backgroundColor: '#ECFDF5', borderColor: '#A7F3D0' },
   journalHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
@@ -617,80 +717,54 @@ const styles = StyleSheet.create({
   emojiTextInside: { fontSize: 22, marginBottom: 2 },
   emojiLabelInside: { fontSize: 10, color: '#6B7280', fontWeight: '600' },
   inputLabelInside: { fontSize: 15, fontWeight: '800', color: '#374151', marginBottom: 10 },
-  modalJournalInput: { flex: 1, backgroundColor: '#F9FAFB', borderRadius: 20, padding: 16, fontSize: 15, color: '#1F2937', borderWidth: 1, borderColor: '#E5E7EB', marginBottom: 20 },
-  btnGuardarJournal: { backgroundColor: '#8E5CF6', padding: 16, borderRadius: 20, alignItems: 'center', marginBottom: 10 },
+  modalJournalInput: { flex: 1, backgroundColor: '#F9FAFB', borderRadius: 20, padding: 15, color: '#111827' },
+  btnGuardarJournal: { backgroundColor: '#8E5CF6', padding: 16, borderRadius: 20, alignItems: 'center', marginTop: 10 },
   btnGuardarJournalTexto: { color: 'white', fontWeight: '800', fontSize: 16 },
-  centrarModal: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' },
-  modalContenido: { width: '85%', backgroundColor: 'white', borderRadius: 35, padding: 25, alignItems: 'center' },
-  modalTitulo: { fontSize: 18, fontWeight: '900', color: '#1F2937', marginBottom: 15, textAlign: 'center' },
-  botonMenu: { width: '100%', padding: 18, borderRadius: 20, marginBottom: 12, alignItems: 'center' },
-  textoBoton: { color: 'white', fontWeight: '800', fontSize: 16 },
-  opcionCaja: { width: '100%', backgroundColor: '#F3F4F6', padding: 15, borderRadius: 15, marginBottom: 10 },
-  opcionTexto: { fontSize: 15, color: '#4B5563', fontWeight: '600', textAlign: 'center' },
+  filaRetoCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#F9FAFB', padding: 16, borderRadius: 20, marginBottom: 10, borderWidth: 1, borderColor: '#F3F4F6' },
+  filaRetoCardCompletada: { backgroundColor: '#ECFDF5', borderColor: '#A7F3D0' },
+  textoRetoItem: { fontSize: 14, color: '#374151', fontWeight: '600', flex: 1, paddingRight: 10 },
+  textoRetoItemCompletado: { color: '#10B981', textDecorationLine: 'line-through' },
+  checkboxReto: { width: 22, height: 22, borderRadius: 8, borderWidth: 2, borderColor: '#D1D5DB', justifyContent: 'center', alignItems: 'center', backgroundColor: 'white' },
+  checkboxRetoChecked: { backgroundColor: '#22C55E', borderColor: '#22C55E' },
+  centrarModal: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.4)' },
+  modalContenido: { backgroundColor: 'white', borderRadius: 35, padding: 25, width: width * 0.88, alignItems: 'center', elevation: 10, position: 'relative' },
+  modalTitulo: { fontSize: 22, fontWeight: '900', color: '#111827', marginBottom: 20, textAlign: 'center' },
   botonVolver: { marginTop: 15, padding: 10 },
-  textoVolver: { color: '#8E5CF6', fontWeight: 'bold' },
-  botonCerrarX: { position: 'absolute', top: -10, right: -10, backgroundColor: 'white', borderRadius: 20 },
-  gameContainer: { alignItems: 'center', width: '100%' },
-  board: { width: 222, height: 222, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', alignContent: 'center', backgroundColor: '#F3F4F6', padding: 6, borderRadius: 20 },
-  square: { width: 66, height: 66, backgroundColor: 'white', margin: 2, justifyContent: 'center', alignItems: 'center', borderRadius: 12, shadowColor: "#000", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 },
-  squareText: { fontSize: 32, fontWeight: '900' },
-  gridMemoria: { width: '100%', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', marginTop: 10 },
-  carta: { width: 65, height: 65, backgroundColor: '#8E5CF6', margin: 5, borderRadius: 15, justifyContent: 'center', alignItems: 'center' },
-  cartaRevelada: { backgroundColor: '#F3F4F6' },
-  emojiCarta: { fontSize: 22 },
-  opcionCajaJuego: { width: '100%', backgroundColor: '#F3F0FF', padding: 15, borderRadius: 15, marginBottom: 10, borderWidth: 1, borderColor: '#8E5CF6' },
-  opcionTextoJuego: { color: '#8E5CF6', fontWeight: 'bold', textAlign: 'center' },
-  areaReflejo: { width: '100%', height: 180, backgroundColor: '#F9FAFB', borderRadius: 20, position: 'relative', overflow: 'hidden' },
-  emojiReflejo: { position: 'absolute' },
-  ganasteTexto: { fontSize: 18, fontWeight: 'bold', color: '#4ADE80', marginVertical: 10 },
-  circuloTiempo: { width: 100, height: 100, borderRadius: 50, borderWidth: 6, borderColor: '#4ADE80', justifyContent: 'center', alignItems: 'center', marginVertical: 20 },
-  numeroTiempo: { fontSize: 24, fontWeight: '900', color: '#111827' },
+  textoVolver: { color: '#6B7280', fontWeight: '700', fontSize: 14 },
+  botonCerrarX: { position: 'absolute', top: -15, right: -15, elevation: 11 },
+  opcionCaja: { backgroundColor: '#F9FAFB', width: '100%', padding: 16, borderRadius: 20, marginBottom: 10, borderWidth: 1, borderColor: '#E5E7EB' },
+  opcionTexto: { color: '#374151', fontWeight: '700', fontSize: 14 },
+  opcionCajaJuego: { backgroundColor: '#F3F0FF', width: '100%', padding: 16, borderRadius: 20, marginBottom: 10, alignItems: 'center' },
+  opcionTextoJuego: { color: '#8E5CF6', fontWeight: '800', fontSize: 15 },
+  gameContainer: { width: '100%', alignItems: 'center' },
+  tarjetaFrase: { width: '100%', padding: 22, borderRadius: 25, marginVertical: 10 },
+  textoFrasePrincipal: { color: 'white', fontSize: 18, fontWeight: '700', textAlign: 'center', fontStyle: 'italic', marginVertical: 15, lineHeight: 24 },
+  btnNuevaFrase: { backgroundColor: '#FCE7F3', padding: 14, borderRadius: 15, marginTop: 10, width: '100%', alignItems: 'center' },
+  btnNuevaFraseTexto: { color: '#DB2777', fontWeight: '800', fontSize: 14 },
+  circuloTiempo: { width: 120, height: 120, borderRadius: 60, borderWidth: 6, borderColor: '#8E5CF6', justifyContent: 'center', alignItems: 'center', marginVertical: 20 },
+  numeroTiempo: { fontSize: 32, fontWeight: '900', color: '#111827' },
   contenedorReps: { alignItems: 'center', marginVertical: 15 },
-  btnContar: { backgroundColor: '#4ADE80', width: 60, height: 60, borderRadius: 30, justifyContent: 'center', alignItems: 'center', marginTop: 10 },
-  tarjetaFrase: { width: '100%', padding: 20, borderRadius: 25, marginVertical: 15 },
-  textoFrasePrincipal: { color: 'white', fontSize: 18, fontWeight: '700', textAlign: 'center', fontStyle: 'italic', marginVertical: 10 },
-  btnNuevaFrase: { backgroundColor: '#FFF', borderWidth: 1, borderColor: '#F472B6', padding: 12, borderRadius: 15, width: '100%', alignItems: 'center' },
-  btnNuevaFraseTexto: { color: '#DB2777', fontWeight: '700', fontSize: 14 },
-
-
-  filaRetoCard: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#F9FAFB',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
+  btnContar: { backgroundColor: '#4ADE80', width: 70, height: 70, borderRadius: 35, justifyContent: 'center', alignItems: 'center', marginTop: 15, elevation: 3 },
+  ganasteTexto: { fontSize: 20, fontWeight: '900', color: '#22C55E', marginVertical: 10 },
+  areaReflejo: { width: '100%', height: 200, backgroundColor: '#F9FAFB', borderRadius: 20, overflow: 'hidden', position: 'relative', borderWidth: 1, borderColor: '#E5E7EB', marginVertical: 10 },
+  emojiReflejo: { position: 'absolute', padding: 10 },
+  gridMemoria: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', width: '100%', gap: 10, marginVertical: 10 },
+  carta: { width: 60, height: 60, backgroundColor: '#8E5CF6', borderRadius: 15, justifyContent: 'center', alignItems: 'center', elevation: 2 },
+  cartaRevelada: { backgroundColor: '#F3F0FF', borderWidth: 2, borderColor: '#8E5CF6' },
+  emojiCarta: { fontSize: 24 },
+  board: { width: 240, height: 240, flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginVertical: 15 },
+  square: { width: 76, height: 76, backgroundColor: '#F9FAFB', borderWidth: 1, borderColor: '#E5E7EB', borderRadius: 15, justifyContent: 'center', alignItems: 'center' },
+  squareText: { fontSize: 28, fontWeight: '900' },
+  textoBoton: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '800',
+  },
+  botonMenu: {
+    width: '100%',
     padding: 16,
     borderRadius: 20,
-    marginBottom: 10
+    marginBottom: 12,
+    alignItems: 'center',
   },
-  filaRetoCardCompletada: {
-    backgroundColor: '#DCFCE7',
-    borderColor: '#BBF7D0'
-  },
-  textoRetoItem: {
-    flex: 1,
-    fontSize: 14,
-    color: '#374151',
-    fontWeight: '600',
-    paddingRight: 10
-  },
-  textoRetoItemCompletado: {
-    color: '#16A34A',
-    textDecorationLine: 'line-through'
-  },
-  checkboxReto: {
-    width: 24,
-    height: 24,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: '#D1D5DB',
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  checkboxRetoChecked: {
-    backgroundColor: '#22C55E',
-    borderColor: '#22C55E'
-  }
 });
