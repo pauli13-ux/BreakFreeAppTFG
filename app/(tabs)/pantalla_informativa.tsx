@@ -65,7 +65,12 @@ export default function PantallaInformativa() {
 
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => router.replace(`/[habito].tsx/${id}`)} // Cambia '/dashboard/' por tu ruta real hacia [habito].tsx
+                    onPress={() =>
+                        router.replace({
+                            pathname: '/[habito]',
+                            params: { habito: String(id ?? 'procrastinar') },
+                        })
+                    }
                 >
                     <Text style={styles.buttonText}>Entrar a mi Dashboard</Text>
                     <Ionicons name="rocket-outline" size={20} color="white" />

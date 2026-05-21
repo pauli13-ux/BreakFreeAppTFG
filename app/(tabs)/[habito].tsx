@@ -394,7 +394,10 @@ export default function Dashboard() {
                   style={styles.btnHistory}
                   onPress={() => {
                     setModalJournalVisible(false);
-                    router.push('/historial-journal');
+                    router.push({
+                      pathname: '/historial-journal',
+                      params: { origen: 'habito', habito: habitoActivo },
+                    });
                   }}
                   activeOpacity={0.7}
                 >
