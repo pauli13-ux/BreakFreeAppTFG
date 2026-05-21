@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -11,11 +11,29 @@ const registrosFalsos = [
 
 export default function HistorialJournal() {
     const router = useRouter();
+    const params = useLocalSearchParams<{ origen?: string; habito?: string }>();
+
+    const volver = () => {
+        if (params.origen === 'habito') {
+            router.replace({
+                pathname: '/[habito]',
+                params: { habito: String(params.habito ?? 'procrastinar') },
+            });
+            return;
+        }
+
+        if (params.origen === 'dashboard') {
+            router.replace('/dashboard');
+            return;
+        }
+
+        router.back();
+    };
 
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton} activeOpacity={0.7}>
+                <TouchableOpacity onPress={volver} style={styles.backButton} activeOpacity={0.7}>
                     <Ionicons name="arrow-back" size={24} color="#805AD5" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Historial de Reflexiones</Text>

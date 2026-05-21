@@ -3,6 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router"; // 🆕 Importamos useLocalSearchParams
 import { useEffect, useState } from "react";
 import {
+  Alert,
   Dimensions,
   KeyboardAvoidingView,
   Modal,
@@ -506,11 +507,24 @@ export default function Dashboard() {
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <TouchableOpacity
                   style={styles.btnHistory}
-                  onPress={() =>
-                    alert(
-                      `Historial: Abriendo tus reflexiones pasadas de ${contenidoRescatePorHabito[habitoActivo].titulo}`,
-                    )
-                  }
+                  onPress={() => {
+                    setModalJournalVisible(false);
+                    Alert.alert(
+                      "Historial",
+                      `Abriendo tus reflexiones pasadas de ${contenidoRescatePorHabito[habitoActivo].titulo}`,
+                      [
+                        {
+                          text: "OK",
+                          onPress: () => {
+                            router.push({
+                              pathname: "/historial-journal",
+                              params: { origen: "dashboard" },
+                            });
+                          },
+                        },
+                      ],
+                    );
+                  }}
                   activeOpacity={0.7}
                 >
                   <Ionicons name="time-outline" size={22} color="#8E5CF6" />
