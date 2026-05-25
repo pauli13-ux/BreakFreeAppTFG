@@ -2,6 +2,7 @@
 // It includes a cute mascot animation that reacts to the user's interactions with the form. The screen also has a link to the registration page for new users. 
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
+import axios from "axios";
 import {
   Dimensions,
   KeyboardAvoidingView,
@@ -37,8 +38,50 @@ export default function CuteLogin() {
     transform: [{ translateY: withSpring(mascotHeight.value * -10) }],
   }));
 
+const handleLogin = async () => { // <-- Añadido async aquí para poder usar Axios
+    setErrorMessage(null);
 
-  const handleLogin = () => {
+    // 1. Validación local de vuestro formulario
+    const error = getFormError(email, password, false);
+    if (error) {
+      setErrorMessage(error);
+      return;
+    }
+
+    // 2. Conexión real con Axios a vuestro Backend en la versión Web
+    try {
+      const response = await axios.post(
+        "http://localhost:8085/api/auth/login", // <-- La URL local limpia para la web
+        {
+          gmail: email,
+          password: password,
+        },
+        { responseType: 'text' } // Por si vuestro Java devuelve texto plano en vez de JSON
+      );
+
+    
+      console.log("Respuesta del servidor:", response.data);
+
+      
+      mascotHeight.value = 5;
+      setTimeout(() => {
+        mascotHeight.value = 0;
+        router.replace("/onboarding"); 
+      }, 500);
+
+    } catch (error: any) {
+      console.error("Error al iniciar sesión:", error);
+
+      // Si el servidor responde pero las credenciales están mal (401)
+      if (error.response && error.response.status === 401) {
+        setErrorMessage("El email o la contraseña no son correctos.");
+      } else {
+        // Si el backend está apagado o da fallo de red
+        setErrorMessage("No se pudo conectar con el servidor.");
+      }
+    }
+  };
+  /*const handleLogin = () => {
     setErrorMessage(null);
 
     const error = getFormError(email, password, false);
@@ -54,7 +97,7 @@ export default function CuteLogin() {
 
       router.replace("/onboarding");
     }, 500);
-  };
+  };*/
 
   return (
     <KeyboardAvoidingView
