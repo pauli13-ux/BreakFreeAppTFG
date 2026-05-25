@@ -53,6 +53,8 @@ public class FeatureController {
 
     @PostMapping("/formularies")
     public ResponseEntity<String> createFormulary(@RequestBody Formulary formulary) {
+        // If your Formulary entity tracks financial/habit losses,
+        // it will now safely bind the incoming 'lossesValue' decimal field from Axios
         formularyService.saveFormulary(formulary);
         return ResponseEntity.ok("Formulary saved successfully!");
     }

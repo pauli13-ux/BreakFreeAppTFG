@@ -1,9 +1,12 @@
 package com.example.features.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 @Entity
 @Table(name = "formulary")
@@ -20,4 +23,7 @@ public class Formulary {
 
     @Column(name = "level_difficulty")
     private String level_difficulty;
+
+    @Column(name = "losses_value") // Adds the decimal column to our H2 database
+    private double lossesValue;
 }

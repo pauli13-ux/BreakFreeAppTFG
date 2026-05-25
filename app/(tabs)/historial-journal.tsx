@@ -1,3 +1,4 @@
+//this file is for the journal history screen, where the user can see a list of their past reflections and emotions related to their habit-breaking journey. Each entry includes the date, the emotion they felt, and a brief description of their experience. The user can access this screen from the dashboard or from the habit details screen, and it helps them track their progress and identify patterns in their behavior.
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';

@@ -1,3 +1,5 @@
+/**this file is for the dashboard (or main) screen, where the user can see their progress, access the SOS section, and view their daily reflection journal. 
+ * It also includes a calendar view of the week and some widgets showing time and money saved. The user can also access settings and notifications from this screen.*/
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router"; // 🆕 Importamos useLocalSearchParams

@@ -1,14 +1,12 @@
+//This file is for the onboarding screen, where the user is introduced to the app and its features. 
+// It includes a brief description of the app's purpose and benefits, as well as a call-to-action button to start using the app.
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-
 export default function OnboardingScreen() {
   const router = useRouter();
-
-
-
   const features = [
     {
       icon: 'extension-puzzle-outline',
