@@ -57,14 +57,14 @@ const handleLogin = async () => { // <-- Añadido async aquí para poder usar Ax
         { responseType: 'text' } // Por si vuestro Java devuelve texto plano en vez de JSON
       );
 
-      // Si el servidor responde bien, imprimimos la respuesta en consola para cotillear
+    
       console.log("Respuesta del servidor:", response.data);
 
-      // 3. Si todo va OK, se ejecuta vuestra animación original y entramos
+      
       mascotHeight.value = 5;
       setTimeout(() => {
         mascotHeight.value = 0;
-        router.replace("/onboarding"); // Vuestra ruta original de entrada
+        router.replace("/onboarding"); 
       }, 500);
 
     } catch (error: any) {
