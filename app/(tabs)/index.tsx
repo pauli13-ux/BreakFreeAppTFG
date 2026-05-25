@@ -1,3 +1,5 @@
+//This file is for the login screen, where the user can enter their email and password to access the app. 
+// It includes a cute mascot animation that reacts to the user's interactions with the form. The screen also has a link to the registration page for new users. 
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {

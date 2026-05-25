@@ -1,3 +1,4 @@
+/** This file is for the formulary */
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -20,7 +21,7 @@ export default function RegistroCuestionario() {
             { title: "¿Cuánto tiempo pasa desde que despiertas hasta el primero?", options: [{ id: '1', label: 'Menos de 5 min' }, { id: '2', label: '6 a 30 min' }, { id: '3', label: '31 a 60 min' }, { id: '4', label: 'Más de una hora' }] },
             { title: "¿En qué situaciones sientes más ganas de fumar?", options: [{ id: '1', label: 'Al tomar café' }, { id: '2', label: 'Después de comer' }, { id: '3', label: 'De fiesta/Social' }, { id: '4', label: 'Bajo estrés' }] },
             { title: "¿Cuál es tu principal motivo para dejarlo?", options: [{ id: '1', label: 'Salud y pulmones' }, { id: '2', label: 'Ahorro de dinero' }, { id: '3', label: 'Presión familiar' }, { id: '4', label: 'Estética y olor' }] },
-            { title: "¿Cuánto te cuesta tu cajetilla habitual?", options: [{ id: '1', label: 'Menos de 5€' }, { id: '2', label: 'Entre 5€ y 6€' }, { id: '3', label: 'Más de 6€' }, { id: '4', label: 'Fumo tabaco de liar' }] }
+            { title: "¿Cuánto te cuesta tu cajetilla habitual?", options: [{ id: '1', label: 'Menos de 5€' }, { id: '2', label: 'Entre 5€ y 6€' }, { id: '3', label: 'Más de 6€' }, { id: '4', label: 'Más de 10€' }] }
         ],
         ansiedadComer: [
             { title: "¿Cómo describirías tu hambre ahora mismo?", options: [{ id: '1', label: 'Repentina y urgente' }, { id: '2', label: 'Poco a poco, puedo esperar' }, { id: '3', label: 'Ganas de algo muy dulce' }, { id: '4', label: 'Vacío en el pecho/estómago' }] },
@@ -30,8 +31,8 @@ export default function RegistroCuestionario() {
             { title: "¿Qué tipo de alimentos se te antojan en esos momentos? ", options: [{ id: '1', label: 'Dulces/Chocolates' }, { id: '2', label: 'Salados/Snacks' }, { id: '3', label: 'Comida rápida' }, { id: '4', label: 'Me da igual mientras sea comida' }] }
         ],
         doomscrolling: [
-            { title: "¿En qué red social pierdes más tiempo?", options: [{ id: '1', label: 'TikTok' }, { id: '2', label: 'Instagram Reels' }, { id: '3', label: 'X (Twitter)' }, { id: '4', label: 'YouTube Shorts' }] },
             { title: "¿De media, cuánto tiempo pasas haciendo scroll?", options: [{ id: '1', label: 'Menos de 1h' }, { id: '2', label: '1-3 horas' }, { id: '3', label: '3-5 horas' }, { id: '4', label: 'Más de 5 horas' }] },
+            { title: "¿En qué red social pierdes más tiempo?", options: [{ id: '1', label: 'TikTok' }, { id: '2', label: 'Instagram Reels' }, { id: '3', label: 'X (Twitter)' }, { id: '4', label: 'YouTube Shorts' }] },
             { title: "¿Cómo te sientes tras una sesión larga de móvil?", options: [{ id: '1', label: 'Vacía y sin energía' }, { id: '2', label: 'Ansiosa' }, { id: '3', label: 'Igual que antes' }, { id: '4', label: 'Inspirada (rara vez)' }] },
             { title: "¿Miras el móvil nada más despertarte?", options: [{ id: '1', label: 'Sí, es lo primero' }, { id: '2', label: 'A los 15-30 min' }, { id: '3', label: 'Después de ducharme' }, { id: '4', label: 'Tras desayunar' }] },
             { title: "¿En que situaciones sueles consumir más?", options: [{ id: '1', label: 'Transporte público' }, { id: '2', label: 'Comiendo solo/a' }, { id: '3', label: 'En la cama' }, { id: '4', label: 'Estudiando/Trabajando' }] }

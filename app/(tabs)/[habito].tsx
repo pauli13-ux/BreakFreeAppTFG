@@ -1,3 +1,5 @@
+/** This file is for the habit-specific screen, where the user can view details and challenges related to a particular habit. */
+
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
