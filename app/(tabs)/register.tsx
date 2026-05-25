@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import LottieView from 'lottie-react-native';
 import React, { useState } from 'react';
+import axios from 'axios';
 import {
     Dimensions,
     KeyboardAvoidingView,
@@ -40,8 +41,67 @@ export default function RegisterScreen() {
     const animatedMascotStyle = useAnimatedStyle(() => ({
         transform: [{ translateY: withSpring(mascotHeight.value * -10) }],
     }));
+const handleRegister = async () => { // <-- Añadido async para soportar Axios
+    setErrorMessage(null);
 
-    const handleRegister = () => {
+    // 1. Validación local (vuestro código original)
+    const error = getFormError(email, password, true, confirmPassword);
+
+    if (error) {
+        setErrorMessage(error);
+        mascotHeight.value = 2; // Animación de error
+        setTimeout(() => { mascotHeight.value = 0; }, 300);
+        return;
+    }
+
+    // 2. Conexión real con Axios a vuestro Java (Versión Web)
+    try {
+        const response = await axios.post(
+            "http://localhost:8085/api/auth/register", // <-- URL local para la Web
+            {
+                username: name,  // <-- Asegúrate de que "name" es la variable de vuestro input de usuario
+                gmail: email,    // Mandamos el correo
+                password: password, // Mandamos la contraseña
+            }
+        );
+
+        console.log("Registro exitoso en el servidor:", response.data);
+
+        // 3. Si el Back responde OK, ejecutamos vuestra animación y abrimos el modal
+        mascotHeight.value = 5;
+        setTimeout(() => {
+            mascotHeight.value = 0;
+            setModalVisible(true); // Abre vuestro modal de éxito original
+        }, 500);
+
+    } catch (error: any) {
+        console.error("Error en el registro:", error);
+        
+        // Animación de error si el servidor falla o el correo ya existe
+        mascotHeight.value = 2;
+        setTimeout(() => { mascotHeight.value = 0; }, 300);
+
+        if (error.response) {
+            console.log("Datos del error que manda Java:", error.response.data);
+            
+          // Sacamos el mensaje de error que manda Java, ya venga como string o dentro de un JSON (.message)
+            const errorData = error.response.data;
+            const mensajeBack = typeof errorData === 'string' ? errorData : (errorData?.message || '');
+
+            // Si vuestro Java dice que ya existe o está registrado, o da un 400
+            if (error.response.status === 400 || mensajeBack.includes("ya existe") || mensajeBack.includes("registrado")) {
+                setErrorMessage("Este correo ya está registrado.");
+            } else {
+                setErrorMessage("Este correo ya está registrado."); // Como plan B seguro para duplicados
+            }
+        } else {
+            // Si el servidor de Java está apagado de verdad
+            setErrorMessage("No se pudo conectar con el servidor de registro.");
+        }
+    }
+  };
+
+    /*const handleRegister = () => {
         setErrorMessage(null);
 
         const error = getFormError(email, password, true, confirmPassword);
@@ -57,8 +117,8 @@ export default function RegisterScreen() {
         setTimeout(() => {
             mascotHeight.value = 0;
             setModalVisible(true);
-        }, 500);
-    };
+        }, 500);*/
+    
 
     return (
         <KeyboardAvoidingView
@@ -203,7 +263,6 @@ export default function RegisterScreen() {
         </KeyboardAvoidingView>
     );
 }
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
