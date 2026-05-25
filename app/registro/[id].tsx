@@ -1,8 +1,8 @@
 /** This file is for the formulary */
-import { Ionicons } from '@expo/vector-icons';
+import axios from 'axios'; // 1. Import Axios
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function RegistroCuestionario() {
     const { id } = useLocalSearchParams();
@@ -11,6 +11,7 @@ export default function RegistroCuestionario() {
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const [responses, setResponses] = useState<Record<number, string>>({});
+    const [isSubmitting, setIsSubmitting] = useState(false); // 2. Loading state for API call
 
     console.log("CUESTIONARIO RECIBE ID:", id);
 
@@ -59,72 +60,153 @@ export default function RegistroCuestionario() {
     const currentData = steps[currentStepIndex];
     const totalSteps = steps.length;
 
-    const handleNext = () => {
+    // 3. Updated handleNext with Axios integration
+    const handleNext = async () => {
         if (!selectedOption) return;
 
+        // Save current step selection
         const newResponses = { ...responses, [currentStepIndex]: selectedOption };
         setResponses(newResponses);
 
         if (currentStepIndex < totalSteps - 1) {
+            // Go to next question
             setCurrentStepIndex(currentStepIndex + 1);
-            setSelectedOption(null);
+            setSelectedOption(responses[currentStepIndex + 1] || null);
         } else {
-            // ADAPTACIÓN DEL FLUJO: Redirige a la pantalla de tiempo objetivo pasando el id del hábito
-            router.replace({
-                pathname: "/tiempo_objetivo",
-                params: { id: id }
-            });
+            // FINAL QUESTION ANSWERED: Send data to Backend
+            setIsSubmitting(true);
+            
+            try {
+                // REPLACE THIS URL with your machine's local IP address or production URL
+                // Note: If using Android Emulator, use 'http://10.0.22.2:3000' instead of localhost
+                const BACKEND_URL = 'http://localhost:3000/api/habits/register';
+
+                const payload = {
+                    habitType: id,       // e.g., "tabaco"
+                    answers: newResponses // e.g., { "0": "2", "1": "1", ..., "4": "3" }
+                };
+
+                const response = await axios.post(BACKEND_URL, payload);
+
+                if (response.status === 201 || response.status === 200) {
+                    // Success! Proceed to the next screen
+                    router.replace({
+                        pathname: "/tiempo_objetivo",
+                        params: { id: id }
+                    });
+                }
+            } catch (error) {
+                console.error("Error saving questionnaire:", error);
+                Alert.alert(
+                    "Error de conexión", 
+                    "No se pudieron guardar tus respuestas. Por favor, inténtalo de nuevo."
+                );
+            } finally {
+                setIsSubmitting(false);
+            }
         }
     };
 
+    // const handleNext = () => {
+    //     if (!selectedOption) return;
+
+    //     const newResponses = { ...responses, [currentStepIndex]: selectedOption };
+    //     setResponses(newResponses);
+
+    //     if (currentStepIndex < totalSteps - 1) {
+    //         setCurrentStepIndex(currentStepIndex + 1);
+    //         setSelectedOption(null);
+    //     } else {
+    //         // ADAPTACIÓN DEL FLUJO: Redirige a la pantalla de tiempo objetivo pasando el id del hábito
+    //         router.replace({
+    //             pathname: "/tiempo_objetivo",
+    //             params: { id: id }
+    //         });
+    //     }
+    // };
+
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => currentStepIndex > 0 ? setCurrentStepIndex(currentStepIndex - 1) : router.back()}>
-                    <Ionicons name="arrow-back" size={26} color="#6B46C1" />
-                </TouchableOpacity>
-                <View style={styles.progressBarBg}>
-                    <View style={[styles.progressBarFill, { width: `${((currentStepIndex + 1) / totalSteps) * 100}%` }]} />
-                </View>
-                <View style={{ width: 40 }} />
-            </View>
+            {/* ... your header ... */}
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 <Text style={styles.stepIndicator}>Paso {currentStepIndex + 1} de {totalSteps}</Text>
                 <Text style={styles.questionTitle}>{currentData.title}</Text>
 
-                <View style={styles.optionsWrapper}>
-                    {currentData.options.map((option: any) => (
-                        <TouchableOpacity
-                            key={option.id}
-                            style={[styles.optionCard, selectedOption === option.id && styles.optionCardSelected]}
-                            onPress={() => setSelectedOption(option.id)}
-                        >
-                            <Text style={[styles.optionLabel, selectedOption === option.id && styles.optionLabelSelected]}>
-                                {option.label}
-                            </Text>
-                            {selectedOption === option.id && (
-                                <View style={styles.checkIcon}><Ionicons name="checkmark-circle" size={24} color="#6B46C1" /></View>
-                            )}
-                        </TouchableOpacity>
-                    ))}
-                </View>
+                {/* ... options mapping ... */}
             </ScrollView>
 
             <View style={styles.footer}>
                 <TouchableOpacity
-                    style={[styles.mainButton, !selectedOption && styles.mainButtonDisabled]}
-                    disabled={!selectedOption}
+                    style={[
+                        styles.mainButton, 
+                        (!selectedOption || isSubmitting) && styles.mainButtonDisabled
+                    ]}
+                    disabled={!selectedOption || isSubmitting}
                     onPress={handleNext}
                 >
-                    <Text style={styles.mainButtonText}>
-                        {currentStepIndex === totalSteps - 1 ? "Continuar" : "Continuar"}
-                    </Text>
+                    {isSubmitting ? (
+                        <ActivityIndicator color="#FFFFFF" />
+                    ) : (
+                        <Text style={styles.mainButtonText}>
+                            {currentStepIndex === totalSteps - 1 ? "Finalizar" : "Continuar"}
+                        </Text>
+                    )}
                 </TouchableOpacity>
             </View>
         </View>
     );
 }
+
+
+//     return (
+//         <View style={styles.container}>
+//             <View style={styles.header}>
+//                 <TouchableOpacity onPress={() => currentStepIndex > 0 ? setCurrentStepIndex(currentStepIndex - 1) : router.back()}>
+//                     <Ionicons name="arrow-back" size={26} color="#6B46C1" />
+//                 </TouchableOpacity>
+//                 <View style={styles.progressBarBg}>
+//                     <View style={[styles.progressBarFill, { width: `${((currentStepIndex + 1) / totalSteps) * 100}%` }]} />
+//                 </View>
+//                 <View style={{ width: 40 }} />
+//             </View>
+
+//             <ScrollView contentContainerStyle={styles.scrollContent}>
+//                 <Text style={styles.stepIndicator}>Paso {currentStepIndex + 1} de {totalSteps}</Text>
+//                 <Text style={styles.questionTitle}>{currentData.title}</Text>
+
+//                 <View style={styles.optionsWrapper}>
+//                     {currentData.options.map((option: any) => (
+//                         <TouchableOpacity
+//                             key={option.id}
+//                             style={[styles.optionCard, selectedOption === option.id && styles.optionCardSelected]}
+//                             onPress={() => setSelectedOption(option.id)}
+//                         >
+//                             <Text style={[styles.optionLabel, selectedOption === option.id && styles.optionLabelSelected]}>
+//                                 {option.label}
+//                             </Text>
+//                             {selectedOption === option.id && (
+//                                 <View style={styles.checkIcon}><Ionicons name="checkmark-circle" size={24} color="#6B46C1" /></View>
+//                             )}
+//                         </TouchableOpacity>
+//                     ))}
+//                 </View>
+//             </ScrollView>
+
+//             <View style={styles.footer}>
+//                 <TouchableOpacity
+//                     style={[styles.mainButton, !selectedOption && styles.mainButtonDisabled]}
+//                     disabled={!selectedOption}
+//                     onPress={handleNext}
+//                 >
+//                     <Text style={styles.mainButtonText}>
+//                         {currentStepIndex === totalSteps - 1 ? "Continuar" : "Continuar"}
+//                     </Text>
+//                 </TouchableOpacity>
+//             </View>
+//         </View>
+//     );
+// }
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#FFFFFF' },
