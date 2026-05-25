@@ -41,7 +41,6 @@ export default function SelectorHabito() {
   ];
 
   const seleccionarHabito = (habitoId: string) => {
-
     router.push({
       pathname: '/adiccion',
       params: { id: habitoId }

@@ -59,8 +59,13 @@ export default function RegistroCuestionario() {
     const currentData = steps[currentStepIndex];
     const totalSteps = steps.length;
 
-    const handleNext = () => {
+    const handleNext = () => { 
+
+    //abrir array he ir recogiendo cada una de las selected options 
+
         if (!selectedOption) return;
+
+        //llamada axios y con el selected options se guarda la seleccion
 
         const newResponses = { ...responses, [currentStepIndex]: selectedOption };
         setResponses(newResponses);
